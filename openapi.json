@@ -1,0 +1,2373 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "그리움-이음 API",
+    "description": "API 문서",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "https://geulium-ieum-api-dev.seoeungi.work",
+      "description": "Default Server url"
+    },
+    {
+      "url": "http://geulium-ieum-api-dev.seoeungi.work",
+      "description": "Default Server url"
+    }
+  ],
+  "security": [
+    {
+      "bearer-jwt": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "회원가입, 이메일 인증, 로그인/로그아웃, 토큰 재발급 등 인증 관련 API"
+    },
+    {
+      "name": "Kakao Auth",
+      "description": "카카오 계정으로 로그인하여 애플리케이션 토큰을 발급"
+    },
+    {
+      "name": "Naver Auth",
+      "description": "네이버 계정으로 로그인하여 애플리케이션 토큰을 발급"
+    },
+    {
+      "name": "Admin Announcement",
+      "description": "공지사항 관리 API (ADMIN|SUPER_ADMIN)"
+    },
+    {
+      "name": "Admin Audit Logs Dead Letter Queue",
+      "description": "감사 로그 Dead Letter Queue API"
+    },
+    {
+      "name": "Admin Dashboard",
+      "description": "관리자 대시보드 통계 API"
+    },
+    {
+      "name": "Admin Content",
+      "description": "관리자 콘텐츠 모니터링 API"
+    },
+    {
+      "name": "Admin Audit Logs",
+      "description": "감사 로그 API"
+    },
+    {
+      "name": "Admin Memorial",
+      "description": "관리자용 추모관 API"
+    },
+    {
+      "name": "Admin User",
+      "description": "관리자 사용자 관리 API"
+    }
+  ],
+  "paths": {
+    "/api/auth/verify-email": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "이메일 인증",
+        "description": "메일로 전송된 인증 코드를 검증하고 최초 로그인용 토큰을 발급합니다.",
+        "operationId": "verifyEmail",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyEmailRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/resend-verification": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "이메일 인증 재발송",
+        "description": "인증 코드를 다시 발송합니다. 쿨다운/최대 시도 수 정책이 적용됩니다.",
+        "operationId": "resend",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResendVerificationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "회원가입",
+        "description": "이메일/비밀번호 등 가입 정보를 제출하여 회원을 생성합니다.",
+        "operationId": "register",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/refresh": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "토큰 재발급",
+        "description": "만료 임박/만료된 Access 토큰을 Refresh 토큰으로 재발급합니다.",
+        "operationId": "refresh",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/password-reset/verify": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "비밀번호 재설정 검증",
+        "description": "전달된 검증 코드 및 새 비밀번호로 재설정을 완료합니다.",
+        "operationId": "verifyPasswordReset",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordResetVerifyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/password-reset/request": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "비밀번호 재설정 요청",
+        "description": "비밀번호 재설정 메일 발송을 요청합니다.",
+        "operationId": "requestPasswordReset",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordResetRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/auth/naver/login": {
+      "post": {
+        "tags": [
+          "Naver Auth"
+        ],
+        "summary": "네이버 로그인",
+        "description": "네이버 인가코드/토큰 정보를 제출하여 로그인하고 JWT를 발급합니다.",
+        "operationId": "login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NaverLoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "로그아웃",
+        "description": "현재 세션/토큰을 로그아웃 처리하고 액세스 토큰을 블랙리스트에 등록합니다.",
+        "operationId": "logout",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogoutRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "로그인",
+        "description": "이메일/비밀번호로 로그인하여 Access/Refresh 토큰을 발급합니다.",
+        "operationId": "login_1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/kakao/login": {
+      "post": {
+        "tags": [
+          "Kakao Auth"
+        ],
+        "summary": "카카오 로그인",
+        "description": "카카오 인가코드/토큰 정보를 제출하여 로그인하고 JWT를 발급합니다.",
+        "operationId": "login_2",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KakaoLoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/find-id": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "아이디 찾기",
+        "description": "이름/휴대전화 등 식별 정보를 이용해 가입된 이메일(ID)을 조회합니다.",
+        "operationId": "findId",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FindIdRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindIdResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/announcement/{id}": {
+      "put": {
+        "tags": [
+          "Admin Announcement"
+        ],
+        "summary": "공지사항 수정",
+        "description": "관리자가 공지사항을 수정합니다.",
+        "operationId": "update_4",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnnouncementUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Admin Announcement"
+        ],
+        "summary": "공지사항 삭제",
+        "description": "관리자가 공지사항을 삭제합니다.",
+        "operationId": "delete_4",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/admin/audit-logs/dlq/reprocess": {
+      "post": {
+        "tags": [
+          "Admin Audit Logs Dead Letter Queue"
+        ],
+        "operationId": "reprocess",
+        "parameters": [
+          {
+            "name": "max",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/DlqReprocessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/announcement": {
+      "post": {
+        "tags": [
+          "Admin Announcement"
+        ],
+        "summary": "공지사항 작성",
+        "description": "관리자가 공지사항을 작성합니다.",
+        "operationId": "create_5",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnnouncementCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminAnnouncementResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/user/{id}/role": {
+      "patch": {
+        "tags": [
+          "Admin User"
+        ],
+        "summary": "사용자 역할 변경",
+        "description": "SUPER_ADMIN만 사용자 역할을 변경할 수 있습니다",
+        "operationId": "changeRole_2",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/admin/user/{id}/deactivate": {
+      "patch": {
+        "tags": [
+          "Admin User"
+        ],
+        "summary": "사용자 비활성화",
+        "description": "사용자를 비활성화합니다(ADMIN|SUPER_ADMIN)",
+        "operationId": "deactivate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/admin/user/{id}/activate": {
+      "patch": {
+        "tags": [
+          "Admin User"
+        ],
+        "summary": "사용자 활성화",
+        "description": "사용자를 활성화합니다(ADMIN|SUPER_ADMIN)",
+        "operationId": "activate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/admin/memorial/{id}/reject": {
+      "patch": {
+        "tags": [
+          "Admin Memorial"
+        ],
+        "operationId": "reject",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RejectRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/admin/memorial/{id}/approve": {
+      "patch": {
+        "tags": [
+          "Admin Memorial"
+        ],
+        "operationId": "approve_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/admin/content/guestbook/{id}/approve": {
+      "patch": {
+        "tags": [
+          "Admin Content"
+        ],
+        "summary": "방명록 승인",
+        "description": "특정 방명록을 승인합니다(ADMIN|SUPER_ADMIN)",
+        "operationId": "approveGuestbook",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/admin/announcement/{id}/publish": {
+      "patch": {
+        "tags": [
+          "Admin Announcement"
+        ],
+        "summary": "공지사항 발행",
+        "description": "관리자가 공지사항을 발행합니다.",
+        "operationId": "publish",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/admin/user/{id}": {
+      "get": {
+        "tags": [
+          "Admin User"
+        ],
+        "summary": "사용자 상세",
+        "description": "특정 사용자의 상세(활동 포함)를 조회합니다(ADMIN|SUPER_ADMIN)",
+        "operationId": "get_2",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUserDetailResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Admin User"
+        ],
+        "summary": "사용자 삭제",
+        "description": "사용자를 삭제합니다(ADMIN|SUPER_ADMIN)",
+        "operationId": "delete_5",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/admin/user/list": {
+      "get": {
+        "tags": [
+          "Admin User"
+        ],
+        "summary": "사용자 목록",
+        "description": "모든 사용자 목록을 조회합니다(ADMIN|SUPER_ADMIN)",
+        "operationId": "list_5",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Zero-based page index (0..N)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "The size of the page to be returned",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SliceAdminUserListItemResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/memorial/{id}": {
+      "get": {
+        "tags": [
+          "Admin Memorial"
+        ],
+        "operationId": "getMemorialWithStats",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemorialWithStatsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/memorial/pending/list": {
+      "get": {
+        "tags": [
+          "Admin Memorial"
+        ],
+        "operationId": "pendingList",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Zero-based page index (0..N)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "The size of the page to be returned",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SliceMemorialResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/memorial/all": {
+      "get": {
+        "tags": [
+          "Admin Memorial"
+        ],
+        "operationId": "all",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Zero-based page index (0..N)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "The size of the page to be returned",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SliceMemorialResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/dashboard/stats": {
+      "get": {
+        "tags": [
+          "Admin Dashboard"
+        ],
+        "summary": "전체 통계",
+        "description": "전체 누적 통계를 조회합니다(ADMIN|SUPER_ADMIN)",
+        "operationId": "stats_1",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemStatsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/dashboard/recent-user": {
+      "get": {
+        "tags": [
+          "Admin Dashboard"
+        ],
+        "summary": "최근 가입 사용자",
+        "description": "최근 가입 사용자를 최신순으로 조회합니다(ADMIN|SUPER_ADMIN)",
+        "operationId": "recentUsers",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Zero-based page index (0..N)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "The size of the page to be returned",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SliceAdminUserListItemResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/dashboard/active-user": {
+      "get": {
+        "tags": [
+          "Admin Dashboard"
+        ],
+        "summary": "활동 많은 사용자(30일)",
+        "description": "최근 n일 기준 활동(추모글 수)이 많은 사용자 목록을 조회합니다(ADMIN|SUPER_ADMIN)",
+        "operationId": "activeUsers",
+        "parameters": [
+          {
+            "name": "days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 30
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActiveItemResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/dashboard/active-memorial": {
+      "get": {
+        "tags": [
+          "Admin Dashboard"
+        ],
+        "summary": "활동 많은 추모관(30일)",
+        "description": "최근 n일 기준 활동(추모글 수)이 많은 추모관 목록을 조회합니다(ADMIN|SUPER_ADMIN)",
+        "operationId": "activeMemorials",
+        "parameters": [
+          {
+            "name": "days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 30
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActiveItemResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/content/tribute": {
+      "get": {
+        "tags": [
+          "Admin Content"
+        ],
+        "summary": "모든 추모글 조회",
+        "description": "시스템 내 모든 추모글을 조회합니다(ADMIN|SUPER_ADMIN)",
+        "operationId": "listTributes",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Zero-based page index (0..N)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "The size of the page to be returned",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SliceTributeResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/content/guestbook": {
+      "get": {
+        "tags": [
+          "Admin Content"
+        ],
+        "summary": "모든 방명록 조회",
+        "description": "시스템 내 모든 방명록을 조회합니다(ADMIN|SUPER_ADMIN)",
+        "operationId": "listGuestbooks",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Zero-based page index (0..N)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "The size of the page to be returned",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SliceGuestbookResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/audit-logs": {
+      "get": {
+        "tags": [
+          "Admin Audit Logs"
+        ],
+        "operationId": "list_6",
+        "parameters": [
+          {
+            "name": "action",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "CREATE",
+                "UPDATE",
+                "DELETE",
+                "LOGIN",
+                "LOGOUT"
+              ]
+            }
+          },
+          {
+            "name": "targetType",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Zero-based page index (0..N)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "The size of the page to be returned",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SliceAdminAuditLogResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/audit-logs/dlq/size": {
+      "get": {
+        "tags": [
+          "Admin Audit Logs Dead Letter Queue"
+        ],
+        "operationId": "size",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int64"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/content/tribute/{id}": {
+      "delete": {
+        "tags": [
+          "Admin Content"
+        ],
+        "summary": "부적절 추모글 삭제",
+        "description": "특정 추모글을 삭제합니다(ADMIN|SUPER_ADMIN)",
+        "operationId": "deleteTribute",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/admin/content/guestbook/{id}": {
+      "delete": {
+        "tags": [
+          "Admin Content"
+        ],
+        "summary": "부적절 방명록 삭제",
+        "description": "특정 방명록을 삭제합니다(ADMIN|SUPER_ADMIN)",
+        "operationId": "deleteGuestbook",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/admin/audit-logs/dlq/purge": {
+      "delete": {
+        "tags": [
+          "Admin Audit Logs Dead Letter Queue"
+        ],
+        "operationId": "purge",
+        "parameters": [
+          {
+            "name": "max",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int64"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LoginRequest": {
+        "type": "object",
+        "description": "이메일/비밀번호 로그인 요청",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "이메일",
+            "example": "user@example.com",
+            "minLength": 1
+          },
+          "password": {
+            "type": "string",
+            "description": "비밀번호",
+            "example": "P@ssw0rd!",
+            "minLength": 1,
+            "pattern": "^(?=.*[a-zA-Z])(?=.*[!@#$%^&*()_+=-])(?=.*[0-9]).{8,20}$"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "TokenResponse": {
+        "type": "object",
+        "description": "발급된 토큰 정보 응답",
+        "properties": {
+          "tokenType": {
+            "type": "string",
+            "description": "토큰 타입",
+            "example": "Bearer"
+          },
+          "accessToken": {
+            "type": "string",
+            "description": "Access 토큰"
+          },
+          "accessTokenExpiresIn": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Access 토큰 만료까지 남은 시간(초)",
+            "example": 21600
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "Refresh 토큰"
+          },
+          "refreshTokenExpiresIn": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Refresh 토큰 만료까지 남은 시간(초)",
+            "example": 7776000
+          }
+        }
+      },
+      "LogoutRequest": {
+        "type": "object",
+        "description": "로그아웃 요청(선택적으로 Refresh 토큰 포함)",
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "description": "Refresh 토큰(선택)"
+          }
+        }
+      },
+      "FindIdRequest": {
+        "type": "object",
+        "description": "아이디(이메일) 찾기 요청",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "이름",
+            "example": "홍길동",
+            "minLength": 1
+          },
+          "phone": {
+            "type": "string",
+            "description": "휴대전화번호",
+            "example": "010-1234-5678",
+            "minLength": 1,
+            "pattern": "^(01[016789])-([0-9]{3,4})-([0-9]{4})$"
+          }
+        },
+        "required": [
+          "name",
+          "phone"
+        ]
+      },
+      "FindIdResponse": {
+        "type": "object",
+        "description": "마스킹된 이메일 응답",
+        "properties": {
+          "maskedEmail": {
+            "type": "string",
+            "description": "마스킹된 이메일",
+            "example": "u***@example.com"
+          }
+        }
+      },
+      "PasswordResetRequest": {
+        "type": "object",
+        "description": "비밀번호 재설정 메일 발송 요청",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "이메일",
+            "example": "user@example.com",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "PasswordResetVerifyRequest": {
+        "type": "object",
+        "description": "비밀번호 재설정 검증 및 변경 요청",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "이메일",
+            "example": "user@example.com",
+            "minLength": 1
+          },
+          "code": {
+            "type": "string",
+            "description": "검증 코드(UUID)",
+            "minLength": 1
+          },
+          "newPassword": {
+            "type": "string",
+            "description": "새 비밀번호(영문/숫자/특수문자 포함 8~20자)",
+            "maxLength": 20,
+            "minLength": 8,
+            "pattern": "^(?=.*[a-zA-Z])(?=.*[!@#$%^&*()_+=-])(?=.*[0-9]).{8,20}$"
+          }
+        },
+        "required": [
+          "code",
+          "email",
+          "newPassword"
+        ]
+      },
+      "MessageResponse": {
+        "type": "object",
+        "description": "간단한 메시지 응답",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "메시지"
+          }
+        }
+      },
+      "AnnouncementUpdateRequest": {
+        "type": "object",
+        "description": "공지사항 수정 요청",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "제목",
+            "maxLength": 200,
+            "minLength": 0
+          },
+          "content": {
+            "type": "string",
+            "description": "내용"
+          },
+          "isPinned": {
+            "type": "boolean",
+            "description": "상단 고정 여부"
+          }
+        }
+      },
+      "TributeResponse": {
+        "type": "object",
+        "description": "추모글 응답",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "추모글 ID"
+          },
+          "memorialId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "추모관 ID"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "작성자 ID"
+          },
+          "content": {
+            "type": "string",
+            "description": "내용"
+          },
+          "isPublic": {
+            "type": "boolean",
+            "description": "공개 여부"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "생성 시각"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "수정 시각"
+          }
+        }
+      },
+      "GuestbookResponse": {
+        "type": "object",
+        "description": "방명록 응답",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID"
+          },
+          "memorialId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "추모관 ID"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "작성자 사용자 ID(비회원일 수 있음)"
+          },
+          "authorName": {
+            "type": "string",
+            "description": "작성자 이름"
+          },
+          "content": {
+            "type": "string",
+            "description": "내용"
+          },
+          "isApproved": {
+            "type": "boolean",
+            "description": "승인 여부"
+          }
+        }
+      },
+      "DlqReprocessResponse": {
+        "type": "object",
+        "properties": {
+          "requested": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fetched": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requeued": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "deleted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "failed": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AnnouncementCreateRequest": {
+        "type": "object",
+        "description": "공지사항 생성 요청",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "제목",
+            "example": "서비스 공지",
+            "maxLength": 200,
+            "minLength": 0
+          },
+          "content": {
+            "type": "string",
+            "description": "내용",
+            "minLength": 1
+          },
+          "isPinned": {
+            "type": "boolean",
+            "description": "상단 고정 여부",
+            "example": false
+          }
+        },
+        "required": [
+          "content",
+          "title"
+        ]
+      },
+      "AdminAnnouncementResponse": {
+        "type": "object",
+        "description": "공지사항 응답",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID"
+          },
+          "title": {
+            "type": "string",
+            "description": "제목"
+          },
+          "content": {
+            "type": "string",
+            "description": "내용"
+          },
+          "authorId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "작성자 ID"
+          },
+          "isPinned": {
+            "type": "boolean",
+            "description": "상단 고정 여부"
+          },
+          "isPublished": {
+            "type": "boolean",
+            "description": "발행 여부"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "발행 시각"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "생성 시각"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "수정 시각"
+          }
+        }
+      },
+      "RoleUpdateRequest": {
+        "type": "object",
+        "description": "관리자: 사용자 역할 변경 요청",
+        "properties": {
+          "role": {
+            "type": "string",
+            "description": "변경할 역할",
+            "enum": [
+              "USER",
+              "ADMIN",
+              "SUPER_ADMIN"
+            ],
+            "example": "ADMIN"
+          }
+        },
+        "required": [
+          "role"
+        ]
+      },
+      "RejectRequest": {
+        "type": "object",
+        "description": "추모관 반려 사유 요청",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "description": "반려 사유",
+            "example": "부적절한 내용 포함"
+          }
+        }
+      },
+      "MemorialResponse": {
+        "type": "object",
+        "description": "추모관 조회 응답",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "추모관 ID",
+            "example": 1001
+          },
+          "deceasedName": {
+            "type": "string",
+            "description": "고인명",
+            "example": "홍길동"
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date",
+            "description": "생년월일",
+            "example": "1950-01-01"
+          },
+          "deathDate": {
+            "type": "string",
+            "format": "date",
+            "description": "사망일",
+            "example": "2020-12-31"
+          },
+          "location": {
+            "type": "string",
+            "description": "장소"
+          },
+          "biography": {
+            "type": "string",
+            "description": "전기/소개"
+          },
+          "photoUrl": {
+            "type": "string",
+            "description": "대표 사진 URL"
+          },
+          "visibility": {
+            "type": "string",
+            "description": "공개 범위",
+            "enum": [
+              "PUBLIC",
+              "PRIVATE",
+              "FAMILY_ONLY"
+            ],
+            "example": "PUBLIC"
+          },
+          "status": {
+            "type": "string",
+            "description": "상태",
+            "enum": [
+              "PENDING",
+              "REJECT",
+              "APPROVED",
+              "CANCEL"
+            ],
+            "example": "PENDING"
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int64",
+            "description": "생성자 사용자 ID"
+          },
+          "updatedBy": {
+            "type": "integer",
+            "format": "int64",
+            "description": "수정자 사용자 ID"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "생성 시각"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "수정 시각"
+          }
+        }
+      },
+      "PageableObject": {
+        "type": "object",
+        "properties": {
+          "offset": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "paged": {
+            "type": "boolean"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unpaged": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SliceMemorialResponse": {
+        "type": "object",
+        "properties": {
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MemorialResponse"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SortObject": {
+        "type": "object",
+        "properties": {
+          "empty": {
+            "type": "boolean"
+          },
+          "sorted": {
+            "type": "boolean"
+          },
+          "unsorted": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SliceTributeResponse": {
+        "type": "object",
+        "properties": {
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TributeResponse"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SliceGuestbookResponse": {
+        "type": "object",
+        "properties": {
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GuestbookResponse"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AdminUserDetailResponse": {
+        "type": "object",
+        "description": "관리자: 사용자 상세(활동 포함)",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "USER",
+              "ADMIN",
+              "SUPER_ADMIN"
+            ]
+          },
+          "profilePhotoUrl": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "lastLoginAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "tributeCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "offeringCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "guestbookCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "AdminUserListItemResponse": {
+        "type": "object",
+        "description": "관리자: 사용자 목록 아이템",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "USER",
+              "ADMIN",
+              "SUPER_ADMIN"
+            ]
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "lastLoginAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SliceAdminUserListItemResponse": {
+        "type": "object",
+        "properties": {
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminUserListItemResponse"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "MemorialWithStatsResponse": {
+        "type": "object",
+        "properties": {
+          "memorialId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "deceasedName": {
+            "type": "string"
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "deathDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "biography": {
+            "type": "string"
+          },
+          "photoUrl": {
+            "type": "string"
+          },
+          "visibility": {
+            "type": "string"
+          },
+          "tributeCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "offeringCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "memberCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "SystemStatsResponse": {
+        "type": "object",
+        "description": "관리자 대시보드: 전체 누적 통계",
+        "properties": {
+          "users": {
+            "type": "integer",
+            "format": "int64",
+            "description": "총 사용자 수"
+          },
+          "memorials": {
+            "type": "integer",
+            "format": "int64",
+            "description": "총 추모관 수"
+          },
+          "tributes": {
+            "type": "integer",
+            "format": "int64",
+            "description": "총 추모글 수"
+          },
+          "offerings": {
+            "type": "integer",
+            "format": "int64",
+            "description": "총 헌화/분향/헌촛 수"
+          },
+          "guestbooks": {
+            "type": "integer",
+            "format": "int64",
+            "description": "총 방명록 수"
+          }
+        }
+      },
+      "ActiveItemResponse": {
+        "type": "object",
+        "description": "활동 상위 항목 응답 (ID/건수)",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "리소스 ID"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int64",
+            "description": "활동 건수"
+          }
+        }
+      },
+      "AdminAuditLogResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "action": {
+            "type": "string"
+          },
+          "targetType": {
+            "type": "string"
+          },
+          "targetId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "ipAddress": {
+            "type": "string"
+          },
+          "userAgent": {
+            "type": "string"
+          },
+          "details": {
+            "type": "object",
+            "additionalProperties": {}
+          }
+        }
+      },
+      "SliceAdminAuditLogResponse": {
+        "type": "object",
+        "properties": {
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminAuditLogResponse"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearer-jwt": {
+        "type": "http",
+        "name": "bearer-jwt",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
