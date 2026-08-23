@@ -5,7 +5,7 @@ type Tone = "neutral" | "accent" | "success" | "warning" | "danger" | "info";
 const toneClasses: Record<Tone, string> = {
   neutral:
     "bg-surface-muted text-foreground/70 ring-1 ring-inset ring-border",
-  accent: "bg-accent-soft text-accent ring-1 ring-inset ring-accent/20",
+  accent: "bg-accent-soft ring-1 ring-inset ring-accent/20",
   success:
     "bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-600/20 dark:bg-emerald-500/10 dark:text-emerald-400 dark:ring-emerald-400/20",
   warning:

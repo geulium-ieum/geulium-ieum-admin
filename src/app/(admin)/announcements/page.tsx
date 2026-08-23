@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Badge } from "@/components/ui/Badge";
-import { Button, LinkButton } from "@/components/ui/Button";
+import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { mockAnnouncements } from "@/lib/mock/announcements";
 
@@ -12,9 +12,11 @@ export default function AnnouncementsPage() {
         title="공지사항"
         description="서비스 공지사항을 작성하고 발행하세요."
         actions={
-          <LinkButton href="/announcements/new" variant="primary">
-            새 공지 작성
-          </LinkButton>
+          <Link href="/announcements/new">
+            <Button>
+              새 공지 작성
+            </Button>
+          </Link>
         }
       />
 
@@ -23,7 +25,7 @@ export default function AnnouncementsPage() {
           <EmptyState title="등록된 공지사항이 없습니다" />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] text-left text-sm">
+            <table className="w-full min-w-180 text-left text-sm">
               <thead>
                 <tr className="text-xs text-muted-foreground">
                   <th className="px-5 py-3 font-medium">제목</th>
@@ -54,10 +56,12 @@ export default function AnnouncementsPage() {
                     </td>
                     <td className="px-5 py-3">
                       <div className="flex justify-end gap-1.5">
-                        <LinkButton size="sm" variant="ghost" href={`/announcements/${a.id}`}>
-                          수정
-                        </LinkButton>
-                        <Button size="sm" variant="danger">
+                        <Link href={`/announcements/${a.id}`}>
+                          <Button size="sm" variant="ghost">
+                            수정
+                          </Button>
+                        </Link>
+                        <Button size="sm" variant="destructive">
                           삭제
                         </Button>
                       </div>

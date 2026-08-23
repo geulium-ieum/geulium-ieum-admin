@@ -62,7 +62,7 @@ export default async function MemorialDetailPage(props: PageProps<"/memorials/[i
 
           <div className="grid grid-cols-3 gap-3">
             <div className="flex items-center gap-3 rounded-2xl border border-border bg-surface p-4">
-              <span className="flex size-9 items-center justify-center rounded-xl bg-accent-soft text-accent">
+              <span className="flex size-9 items-center justify-center rounded-xl bg-accent-soft">
                 <MessageIcon className="size-4.5" />
               </span>
               <div>
@@ -71,7 +71,7 @@ export default async function MemorialDetailPage(props: PageProps<"/memorials/[i
               </div>
             </div>
             <div className="flex items-center gap-3 rounded-2xl border border-border bg-surface p-4">
-              <span className="flex size-9 items-center justify-center rounded-xl bg-accent-soft text-accent">
+              <span className="flex size-9 items-center justify-center rounded-xl bg-accent-soft">
                 <FlameIcon className="size-4.5" />
               </span>
               <div>
@@ -80,7 +80,7 @@ export default async function MemorialDetailPage(props: PageProps<"/memorials/[i
               </div>
             </div>
             <div className="flex items-center gap-3 rounded-2xl border border-border bg-surface p-4">
-              <span className="flex size-9 items-center justify-center rounded-xl bg-accent-soft text-accent">
+              <span className="flex size-9 items-center justify-center rounded-xl bg-accent-soft">
                 <UsersIcon className="size-4.5" />
               </span>
               <div>

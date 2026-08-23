@@ -2,12 +2,44 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
-import { Field, inputClass } from "@/components/ui/Field";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/Field";
+import { toast } from "@/components/ui/toast";
+import { userService } from "@/lib/service/user";
+import { Input } from "@/components/ui/input";
+import { useForm } from "@tanstack/react-form";
+import { setToken } from "@/lib/server/auth";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const router = useRouter();
 
+  const form = useForm({
+    defaultValues: {
+      email: '',
+      password: ''
+    },
+    onSubmit: async ({ value }) => {
+      const { email, password } = value;
+      try {
+        const response = await userService.post.login({
+          email,
+          password
+        });
+        await setToken(response);
+        router.replace("/dashboard");
+      } catch (error) {
+        console.error(error);
+        toast.add({
+          type: "error",
+          title: "로그인에 실패했습니다"
+        });
+      }
+    }
+  })
+
+  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    form.handleSubmit();
   };
 
   return (
@@ -20,29 +52,46 @@ export default function LoginPage() {
       </div>
 
       <form className="space-y-4" onSubmit={handleSubmit}>
-        <Field label="이메일" htmlFor="email">
-          <input
-            id="email"
+        <FieldGroup>
+          <form.Field
             name="email"
-            type="email"
-            autoComplete="email"
-            placeholder="admin@geulium-ieum.com"
-            className={inputClass}
+            children={(field) => (
+              <Field>
+                <FieldLabel htmlFor={field.name}>이메일</FieldLabel>
+                <Input
+                  id={field.name}
+                  name={field.name}
+                  value={field.state.value}
+                  type="email"
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  placeholder="admin@geulium-ieum.com"
+                  autoComplete="email"
+                />
+              </Field>
+            )}
           />
-        </Field>
-
-        <Field label="비밀번호" htmlFor="password">
-          <input
-            id="password"
+          <form.Field
             name="password"
-            type="password"
-            autoComplete="current-password"
-            placeholder="비밀번호 입력"
-            className={inputClass}
+            children={(field) => (
+              <Field>
+                <FieldLabel htmlFor={field.name}>비밀번호</FieldLabel>
+                <Input
+                  id={field.name}
+                  name={field.name}
+                  value={field.state.value}
+                  type="password"
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  autoComplete="current-password"
+                  placeholder="비밀번호 입력"
+                />
+              </Field>
+            )}
           />
-        </Field>
+        </FieldGroup>
 
-        <Button type="submit" variant="primary" className="w-full">
+        <Button type="submit" className="w-full">
           로그인
         </Button>
       </form>

@@ -1,5 +1,5 @@
 import { TokenSchema } from '@/constants/user';
-import { http } from '../ utils';
+import { http } from '../utils';
 import * as v from 'valibot';
 
 export async function postLogin({
@@ -15,7 +15,7 @@ export async function postLogin({
         email,
         password
       }
-    });
+    }).json();
     return v.parse(TokenSchema, response);
   } catch (error) {
     throw error;
