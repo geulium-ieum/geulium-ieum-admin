@@ -1,7 +1,13 @@
 'use server'
 
 import { TokenResponse } from "@/types/api";
-import { cookies } from "next/headers"
+import { cookies } from "next/headers";
+import { redirect, RedirectType } from "next/navigation";
+
+export async function getToken() {
+  const cookieStore = await cookies();
+  return cookieStore.get('token');
+};
 
 export async function setToken(data: TokenResponse) {
   const cookieStore = await cookies();
@@ -17,4 +23,5 @@ export async function setToken(data: TokenResponse) {
 export async function deleteToken() {
   const cookieStore = await cookies();
   cookieStore.delete('token');
-}
+  redirect("/login", RedirectType.replace);
+};

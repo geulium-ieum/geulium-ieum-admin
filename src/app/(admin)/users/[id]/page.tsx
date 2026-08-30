@@ -4,8 +4,9 @@ import { ArrowLeftIcon, BookIcon, FlameIcon, MessageIcon } from "@/components/ic
 import { PageHeader } from "@/components/ui/PageHeader";
 import { RoleBadge, Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { Field, inputClass } from "@/components/ui/Field";
+import { Field } from "@/components/ui/Field";
 import { mockUserDetails } from "@/lib/mock/users";
+import { Label } from "@/components/ui/label";
 
 export default async function UserDetailPage(props: PageProps<"/users/[id]">) {
   const { id } = await props.params;
@@ -101,14 +102,15 @@ export default async function UserDetailPage(props: PageProps<"/users/[id]">) {
             <p className="mb-3 text-xs text-muted-foreground">
               SUPER_ADMIN 계정만 역할을 변경할 수 있습니다.
             </p>
-            <Field label="역할" htmlFor="role">
-              <select id="role" name="role" defaultValue={user.role} className={inputClass}>
+            <Field>
+              <Label htmlFor="role">역할</Label>
+              <select id="role" name="role" defaultValue={user.role}>
                 <option value="USER">일반회원</option>
                 <option value="ADMIN">관리자</option>
                 <option value="SUPER_ADMIN">슈퍼 관리자</option>
               </select>
             </Field>
-            <Button variant="primary" className="mt-3 w-full">
+            <Button className="mt-3 w-full">
               역할 저장
             </Button>
           </div>
@@ -122,7 +124,7 @@ export default async function UserDetailPage(props: PageProps<"/users/[id]">) {
               <Button variant="secondary" className="w-full">
                 {user.isActive ? "계정 비활성화" : "계정 활성화"}
               </Button>
-              <Button variant="danger" className="w-full">
+              <Button variant="destructive" className="w-full">
                 계정 삭제
               </Button>
             </div>

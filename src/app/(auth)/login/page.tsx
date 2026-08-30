@@ -35,7 +35,7 @@ export default function LoginPage() {
         });
       }
     }
-  })
+  });
 
   const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();

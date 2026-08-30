@@ -1,11 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { redirect, RedirectType, usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
-import { FlowerIcon, LogOutIcon, MenuIcon, XIcon } from "@/components/icons";
+import { FlowerIcon, MenuIcon, XIcon } from "@/components/icons";
 import { adminNav } from "@/lib/admin-nav";
 import { RoleBadge } from "@/components/ui/Badge";
+import { LogOutIcon } from "lucide-react";
+import { Button } from "../ui/Button";
+import { deleteToken } from "@/lib/server/auth";
 
 function Logo() {
   return (
@@ -47,6 +50,14 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
 }
 
 function AccountFooter() {
+  const handleLogout = async () => {
+    try {
+      await deleteToken();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="flex items-center gap-2.5 border-t border-border px-4 py-3">
       <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-surface-muted text-xs font-semibold text-foreground">
@@ -56,13 +67,14 @@ function AccountFooter() {
         <p className="truncate text-sm font-medium text-foreground">관리자</p>
         <RoleBadge role="ADMIN" />
       </div>
-      <Link
-        href="/login"
+      <Button
+        variant="ghost"
         aria-label="로그아웃"
-        className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-surface-muted hover:text-foreground"
+        className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-surface-muted hover:text-foreground hover:cursor-pointer"
+        onClick={handleLogout}
       >
         <LogOutIcon className="size-4.5" />
-      </Link>
+      </Button>
     </div>
   );
 }

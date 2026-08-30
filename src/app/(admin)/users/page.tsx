@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Badge, RoleBadge } from "@/components/ui/Badge";
-import { Button, LinkButton } from "@/components/ui/Button";
+import { Button } from "@/components/ui/Button";
 import { Pagination } from "@/components/ui/Pagination";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { mockUsers } from "@/lib/mock/users";
@@ -24,7 +24,7 @@ export default async function UsersPage(props: PageProps<"/users">) {
           <EmptyState title="사용자가 없습니다" />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[820px] text-left text-sm">
+            <table className="w-full min-w-205 text-left text-sm">
               <thead>
                 <tr className="text-xs text-muted-foreground">
                   <th className="px-5 py-3 font-medium">이름</th>
@@ -64,9 +64,11 @@ export default async function UsersPage(props: PageProps<"/users">) {
                         <Button size="sm" variant="secondary">
                           {user.isActive ? "비활성화" : "활성화"}
                         </Button>
-                        <LinkButton size="sm" variant="ghost" href={`/users/${user.id}`}>
-                          상세
-                        </LinkButton>
+                        <Link href={`/users/${user.id}`}>
+                          <Button size="sm" variant="ghost">
+                            상세
+                          </Button>
+                        </Link>
                       </div>
                     </td>
                   </tr>
