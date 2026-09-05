@@ -4,6 +4,28 @@
  */
 
 // ---------- 공통 ----------
+export interface ListParams {
+  page?: number;
+  size?: number;
+  sort?: {
+    field: 'deceasedName' |
+    'birthDate' |
+    'deathDate' |
+    'location' |
+    'biography' |
+    'photoUrl' |
+    'visibility' |
+    'status' |
+    'rejectionReason' |
+    'approvedBy' |
+    'approvedAt' |
+    'createdBy' |
+    'updatedBy' |
+    'createdAt' |
+    'updatedAt',
+    direction: 'asc' | 'desc'
+  }[];
+}
 
 export interface SortObject {
   empty: boolean;
@@ -18,18 +40,6 @@ export interface PageableObject {
   pageNumber: number;
   pageSize: number;
   unpaged: boolean;
-}
-
-export interface Slice<T> {
-  size: number;
-  content: T[];
-  number: number;
-  sort: SortObject;
-  numberOfElements: number;
-  pageable: PageableObject;
-  first: boolean;
-  last: boolean;
-  empty: boolean;
 }
 
 export type UserRole = "USER" | "ADMIN" | "SUPER_ADMIN";
@@ -210,6 +220,15 @@ export interface ActiveItemResponse {
 
 // ---------- Admin Audit Logs ----------
 
+export interface AdminAuditLogRequest extends ListParams {
+  token: string
+  action: AuditAction
+  targetType: string
+  userId: string
+  from: string
+  to: string
+}
+
 export interface AdminAuditLogResponse {
   id: number;
   createdAt: string;
@@ -219,13 +238,5 @@ export interface AdminAuditLogResponse {
   userId: number;
   ipAddress: string;
   userAgent: string;
-  details: Record<string, unknown>;
-}
-
-export interface DlqReprocessResponse {
-  requested: number;
-  fetched: number;
-  requeued: number;
-  deleted: number;
-  failed: number;
+  details: Record<string, string>;
 }
