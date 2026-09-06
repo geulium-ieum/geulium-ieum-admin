@@ -5,7 +5,6 @@ import { redirect, RedirectType, usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { FlowerIcon, MenuIcon, XIcon } from "@/components/icons";
 import { adminNav } from "@/lib/admin-nav";
-import { RoleBadge } from "@/components/ui/Badge";
 import { LogOutIcon } from "lucide-react";
 import { Button } from "../ui/Button";
 import { deleteToken } from "@/lib/server/auth";
@@ -65,7 +64,7 @@ function AccountFooter() {
       </span>
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium text-foreground">관리자</p>
-        <RoleBadge role="ADMIN" />
+        {/* <RoleBadge role="ADMIN" /> */}
       </div>
       <Button
         variant="ghost"

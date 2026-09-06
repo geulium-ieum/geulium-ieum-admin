@@ -6,7 +6,8 @@ import { redirect, RedirectType } from "next/navigation";
 
 export async function getToken() {
   const cookieStore = await cookies();
-  return cookieStore.get('token');
+  const token = cookieStore.get('token');
+  return token?.value;
 };
 
 export async function setToken(data: TokenResponse) {

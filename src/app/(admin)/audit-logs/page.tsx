@@ -1,27 +1,44 @@
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { Field, inputClass } from "@/components/ui/Field";
+import { Field } from "@/components/ui/Field";
 import { Pagination } from "@/components/ui/Pagination";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { mockAuditLogs, mockDlqSize } from "@/lib/mock/audit-logs";
 import { toSlice } from "@/lib/mock/slice";
 import type { AuditAction } from "@/types/api";
+import { auditService } from "@/lib/service/auditLog";
+import { getToken } from "@/lib/server/auth";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import moment from "moment";
 
-const actionTone: Record<AuditAction, "neutral" | "accent" | "success" | "warning" | "danger" | "info"> = {
-  CREATE: "success",
-  UPDATE: "info",
-  DELETE: "danger",
-  LOGIN: "neutral",
-  LOGOUT: "neutral",
+const actionTone: Record<AuditAction, "default" | "secondary" | "outline" | "destructive"> = {
+  CREATE: "default",
+  UPDATE: "secondary",
+  DELETE: "destructive",
+  LOGIN: "outline",
+  LOGOUT: "outline",
 };
 
 export default async function AuditLogsPage(props: PageProps<"/audit-logs">) {
   const sp = await props.searchParams;
-  const action = typeof sp.action === "string" ? sp.action : "";
+  const action = sp.action as AuditAction | undefined;
   const targetType = typeof sp.targetType === "string" ? sp.targetType : "";
   const userId = typeof sp.userId === "string" ? sp.userId : "";
+  const from = typeof sp.from === "string" ? moment(sp.from).format() : "";
+  const to = typeof sp.to === "string" ? moment(sp.to).format() : "";
   const page = Number(sp.page ?? 0) || 0;
+  const token = await getToken();
+  const auditLogResponse = await auditService.get.auditLogs({
+    token: token ? token : "",
+    action,
+    targetType,
+    userId,
+    from,
+    to,
+    page
+  });
 
   const filtered = mockAuditLogs.filter((log) => {
     if (action && log.action !== action) return false;
@@ -41,8 +58,9 @@ export default async function AuditLogsPage(props: PageProps<"/audit-logs">) {
       <PageHeader title="감사 로그" description="관리자 및 시스템 활동 이력을 조회하세요." />
 
       <form className="grid grid-cols-1 gap-3 rounded-2xl border border-border bg-surface p-5 sm:grid-cols-2 lg:grid-cols-5">
-        <Field label="액션" htmlFor="action">
-          <select id="action" name="action" defaultValue={action} className={inputClass}>
+        <Field>
+          <Label htmlFor="action">액션</Label>
+          <select id="action" name="action" defaultValue={action}>
             <option value="">전체</option>
             <option value="CREATE">CREATE</option>
             <option value="UPDATE">UPDATE</option>
@@ -51,32 +69,34 @@ export default async function AuditLogsPage(props: PageProps<"/audit-logs">) {
             <option value="LOGOUT">LOGOUT</option>
           </select>
         </Field>
-        <Field label="대상 타입" htmlFor="targetType">
-          <input
+        <Field>
+          <Label htmlFor="targetType">대상 타입</Label>
+          <Input
             id="targetType"
             name="targetType"
             defaultValue={targetType}
             placeholder="예: MEMORIAL"
-            className={inputClass}
           />
         </Field>
-        <Field label="사용자 ID" htmlFor="userId">
-          <input
+        <Field>
+          <Label htmlFor="userId">사용자 ID</Label>
+          <Input
             id="userId"
             name="userId"
             defaultValue={userId}
             placeholder="예: 1038"
-            className={inputClass}
           />
         </Field>
-        <Field label="시작일" htmlFor="from">
-          <input id="from" name="from" type="date" className={inputClass} />
+        <Field>
+          <Label htmlFor="from">시작일</Label>
+          <Input id="from" name="from" type="date" />
         </Field>
-        <Field label="종료일" htmlFor="to">
-          <input id="to" name="to" type="date" className={inputClass} />
+        <Field>
+          <Label htmlFor="to">종료일</Label>
+          <Input id="to" name="to" type="date" />
         </Field>
         <div className="flex items-end sm:col-span-2 lg:col-span-5">
-          <Button type="submit" variant="primary">
+          <Button type="submit">
             조회
           </Button>
         </div>
@@ -99,13 +119,13 @@ export default async function AuditLogsPage(props: PageProps<"/audit-logs">) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {slice.content.map((log) => (
+                {auditLogResponse.content.map((log) => (
                   <tr key={log.id}>
                     <td className="px-5 py-3 whitespace-nowrap text-muted-foreground">
                       {log.createdAt.slice(0, 19).replace("T", " ")}
                     </td>
                     <td className="px-5 py-3">
-                      <Badge tone={actionTone[log.action]}>{log.action}</Badge>
+                      <Badge variant={actionTone[log.action]}>{log.action}</Badge>
                     </td>
                     <td className="px-5 py-3 text-foreground">
                       {log.targetType} #{log.targetId}
@@ -143,17 +163,17 @@ export default async function AuditLogsPage(props: PageProps<"/audit-logs">) {
           <p className="text-2xl font-semibold tabular-nums text-foreground">{mockDlqSize}</p>
         </div>
         <div className="flex flex-wrap items-end gap-3">
-          <Field label="최대 처리 건수" htmlFor="max">
-            <input
+          <Field>
+            <Input
               id="max"
               name="max"
               type="number"
               defaultValue={100}
-              className={`${inputClass} w-32`}
+              className="w-32"
             />
           </Field>
           <Button variant="secondary">재처리</Button>
-          <Button variant="danger">전체 비우기</Button>
+          <Button variant="destructive">전체 비우기</Button>
         </div>
       </div>
     </div>

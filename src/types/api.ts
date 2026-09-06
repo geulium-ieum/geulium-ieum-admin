@@ -222,11 +222,11 @@ export interface ActiveItemResponse {
 
 export interface AdminAuditLogRequest extends ListParams {
   token: string
-  action: AuditAction
-  targetType: string
-  userId: string
-  from: string
-  to: string
+  action?: AuditAction
+  targetType?: string
+  userId?: string
+  from?: string
+  to?: string
 }
 
 export interface AdminAuditLogResponse {
