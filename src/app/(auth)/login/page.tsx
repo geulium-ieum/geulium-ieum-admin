@@ -4,14 +4,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/Field";
 import { toast } from "@/components/ui/toast";
-import { userService } from "@/lib/service/user";
 import { Input } from "@/components/ui/input";
 import { useForm } from "@tanstack/react-form";
-import { setToken } from "@/lib/server/auth";
-import { useRouter } from "next/navigation";
+import { login } from "@/lib/server/auth";
 
 export default function LoginPage() {
-  const router = useRouter();
 
   const form = useForm({
     defaultValues: {
@@ -19,14 +16,8 @@ export default function LoginPage() {
       password: ''
     },
     onSubmit: async ({ value }) => {
-      const { email, password } = value;
       try {
-        const response = await userService.post.login({
-          email,
-          password
-        });
-        await setToken(response);
-        router.replace("/dashboard");
+        await login(value);
       } catch (error) {
         console.error(error);
         toast.add({

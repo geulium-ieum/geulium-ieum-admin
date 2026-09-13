@@ -1,5 +1,5 @@
 import { LoginRequest } from "@/types/api";
-import { postLogin } from "../api/auth";
+import { postLogin, postLogout, postRefreshToken } from "../api/auth";
 
 class UserService {
   public get = {
@@ -9,6 +9,12 @@ class UserService {
     login: async ({ email, password }: LoginRequest) => {
       return await postLogin({ email, password });
     },
+    refreshToken: async ({ refreshToken }: { refreshToken: string }) => {
+      return await postRefreshToken({ refreshToken });
+    },
+    logout: async ({ refreshToken }: { refreshToken: string }) => {
+      return await postLogout({ refreshToken });
+    }
   }
 }
 

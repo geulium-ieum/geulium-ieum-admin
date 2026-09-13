@@ -21,3 +21,32 @@ export async function postLogin({
     throw error;
   }
 };
+
+export async function postRefreshToken({
+  refreshToken
+}: {
+  refreshToken: string
+}) {
+  try {
+    const response = await http.post("auth/refresh", {
+      json: { refreshToken }
+    }).json();
+    return v.parse(TokenSchema, response);
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function postLogout({
+  refreshToken
+}: {
+  refreshToken: string
+}) {
+  try {
+    await http.post("auth/logout", {
+      json: { refreshToken }
+    });
+  } catch (error) {
+    throw error;
+  }
+}

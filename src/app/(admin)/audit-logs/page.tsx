@@ -8,7 +8,7 @@ import { mockAuditLogs, mockDlqSize } from "@/lib/mock/audit-logs";
 import { toSlice } from "@/lib/mock/slice";
 import type { AuditAction } from "@/types/api";
 import { auditService } from "@/lib/service/auditLog";
-import { getToken } from "@/lib/server/auth";
+import { getAccessToken } from "@/lib/server/auth";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import moment from "moment";
@@ -29,7 +29,7 @@ export default async function AuditLogsPage(props: PageProps<"/audit-logs">) {
   const from = typeof sp.from === "string" ? moment(sp.from).format() : "";
   const to = typeof sp.to === "string" ? moment(sp.to).format() : "";
   const page = Number(sp.page ?? 0) || 0;
-  const token = await getToken();
+  const token = await getAccessToken();
   const auditLogResponse = await auditService.get.auditLogs({
     token: token ? token : "",
     action,
