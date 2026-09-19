@@ -9,7 +9,6 @@ export function Pagination({
   page,
   first,
   last,
-  numberOfElements,
   size,
   basePath,
   extraParams,
@@ -17,7 +16,6 @@ export function Pagination({
   page: number;
   first: boolean;
   last: boolean;
-  numberOfElements: number;
   size: number;
   basePath: string;
   /** page 외에 유지해야 할 쿼리 파라미터 (예: 탭 상태) */
@@ -32,7 +30,7 @@ export function Pagination({
   return (
     <div className="flex items-center justify-between border-t border-border px-4 py-3 sm:px-6">
       <p className="text-sm text-muted-foreground">
-        {page + 1}페이지 · {numberOfElements}건 표시 (페이지당 {size}건)
+        {page}페이지 · 10건 표시 (페이지당 {size}건)
       </p>
       <div className="flex items-center gap-2">
         <Link

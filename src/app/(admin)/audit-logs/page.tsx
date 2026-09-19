@@ -4,14 +4,14 @@ import { Button } from "@/components/ui/Button";
 import { Field } from "@/components/ui/Field";
 import { Pagination } from "@/components/ui/Pagination";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { mockAuditLogs, mockDlqSize } from "@/lib/mock/audit-logs";
-import { toSlice } from "@/lib/mock/slice";
-import type { AuditAction } from "@/types/api";
+import type { AuditAction, AuditTargetType } from "@/types/api";
 import { auditService } from "@/lib/service/auditLog";
 import { getAccessToken } from "@/lib/server/auth";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import moment from "moment";
+import PurgeButton from "@/components/audit-log/PurgeButton";
+import ReprocessButton from "@/components/audit-log/ReprocessButton";
 
 const actionTone: Record<AuditAction, "default" | "secondary" | "outline" | "destructive"> = {
   CREATE: "default",
@@ -23,12 +23,12 @@ const actionTone: Record<AuditAction, "default" | "secondary" | "outline" | "des
 
 export default async function AuditLogsPage(props: PageProps<"/audit-logs">) {
   const sp = await props.searchParams;
-  const action = sp.action as AuditAction | undefined;
-  const targetType = typeof sp.targetType === "string" ? sp.targetType : "";
-  const userId = typeof sp.userId === "string" ? sp.userId : "";
-  const from = typeof sp.from === "string" ? moment(sp.from).format() : "";
-  const to = typeof sp.to === "string" ? moment(sp.to).format() : "";
-  const page = Number(sp.page ?? 0) || 0;
+  const action = typeof sp.action === "string" ? sp.action as AuditAction : undefined;
+  const targetType = typeof sp.targetType === "string" ? sp.targetType as AuditTargetType : undefined;
+  const userId = typeof sp.userId === "string" ? sp.userId : undefined;
+  const from = (typeof sp.from === "string" && moment(sp.from).isValid()) ? moment(sp.from).format() : undefined;
+  const to = (typeof sp.to === "string" && moment(sp.to).isValid()) ? moment(sp.to).format() : undefined;
+  const page = Number(sp.page ?? 1) || 1;
   const token = await getAccessToken();
   const auditLogResponse = await auditService.get.auditLogs({
     token: token ? token : "",
@@ -37,16 +37,11 @@ export default async function AuditLogsPage(props: PageProps<"/audit-logs">) {
     userId,
     from,
     to,
-    page
+    page,
+    size: 10
   });
+  const auditDLQResponse = await auditService.get.DLQSize({ token: token ? token : "" });
 
-  const filtered = mockAuditLogs.filter((log) => {
-    if (action && log.action !== action) return false;
-    if (targetType && !log.targetType.toLowerCase().includes(targetType.toLowerCase())) return false;
-    if (userId && String(log.userId) !== userId) return false;
-    return true;
-  });
-  const slice = toSlice(filtered, { page, size: 10 });
   const extraParams = {
     ...(action ? { action } : {}),
     ...(targetType ? { targetType } : {}),
@@ -74,7 +69,7 @@ export default async function AuditLogsPage(props: PageProps<"/audit-logs">) {
           <Input
             id="targetType"
             name="targetType"
-            defaultValue={targetType}
+            value={targetType}
             placeholder="예: MEMORIAL"
           />
         </Field>
@@ -83,7 +78,7 @@ export default async function AuditLogsPage(props: PageProps<"/audit-logs">) {
           <Input
             id="userId"
             name="userId"
-            defaultValue={userId}
+            value={userId}
             placeholder="예: 1038"
           />
         </Field>
@@ -103,7 +98,7 @@ export default async function AuditLogsPage(props: PageProps<"/audit-logs">) {
       </form>
 
       <div className="rounded-2xl border border-border bg-surface">
-        {slice.content.length === 0 ? (
+        {auditLogResponse.content.length === 0 ? (
           <EmptyState title="조건에 맞는 로그가 없습니다" />
         ) : (
           <div className="overflow-x-auto">
@@ -142,11 +137,10 @@ export default async function AuditLogsPage(props: PageProps<"/audit-logs">) {
           </div>
         )}
         <Pagination
-          page={slice.number}
-          first={slice.first}
-          last={slice.last}
-          numberOfElements={slice.numberOfElements}
-          size={slice.size}
+          page={page}
+          first={auditLogResponse.first}
+          last={auditLogResponse.last}
+          size={10}
           basePath="/audit-logs"
           extraParams={extraParams}
         />
@@ -160,7 +154,9 @@ export default async function AuditLogsPage(props: PageProps<"/audit-logs">) {
               처리에 실패해 유실 위험이 있는 감사 로그 이벤트를 관리합니다.
             </p>
           </div>
-          <p className="text-2xl font-semibold tabular-nums text-foreground">{mockDlqSize}</p>
+          <p className="text-2xl font-semibold tabular-nums text-foreground">
+            {auditDLQResponse}
+          </p>
         </div>
         <div className="flex flex-wrap items-end gap-3">
           <Field>
@@ -172,8 +168,10 @@ export default async function AuditLogsPage(props: PageProps<"/audit-logs">) {
               className="w-32"
             />
           </Field>
-          <Button variant="secondary">재처리</Button>
-          <Button variant="destructive">전체 비우기</Button>
+          {/* <Button variant="secondary">재처리</Button> */}
+          {/* <Button variant="destructive">전체 비우기</Button> */}
+          <ReprocessButton token={token} />
+          <PurgeButton token={token} />
         </div>
       </div>
     </div>

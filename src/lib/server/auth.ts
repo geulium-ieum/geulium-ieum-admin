@@ -8,6 +8,7 @@ import { userService } from "../service/user";
 export async function login({ email, password }: LoginRequest) {
   const data = await userService.post.login({ email, password });
   await setToken(data);
+  redirect("/");
 };
 
 export async function getAccessToken() {
@@ -30,7 +31,7 @@ export async function setToken(data: TokenResponse) {
     name: 'accessToken',
     value: data.accessToken,
     httpOnly: true,
-    maxAge: data.accessTokenExpiresIn,
+    maxAge: data.accessTokenExpiresIn / 1000,
     secure,
     sameSite
   });
@@ -38,7 +39,7 @@ export async function setToken(data: TokenResponse) {
     name: 'refreshToken',
     value: data.refreshToken,
     httpOnly: true,
-    maxAge: data.refreshTokenExpiresIn,
+    maxAge: data.refreshTokenExpiresIn / 1000,
     secure,
     sameSite
   });

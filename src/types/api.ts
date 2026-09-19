@@ -42,10 +42,23 @@ export interface PageableObject {
   unpaged: boolean;
 }
 
+export interface Slice<T> {
+  size: number;
+  content: T[];
+  number: number;
+  sort: SortObject;
+  numberOfElements: number;
+  pageable: PageableObject;
+  first: boolean;
+  last: boolean;
+  empty: boolean;
+}
+
 export type UserRole = "USER" | "ADMIN" | "SUPER_ADMIN";
 export type MemorialStatus = "PENDING" | "REJECT" | "APPROVED" | "CANCEL";
 export type MemorialVisibility = "PUBLIC" | "PRIVATE" | "FAMILY_ONLY";
 export type AuditAction = "CREATE" | "UPDATE" | "DELETE" | "LOGIN" | "LOGOUT";
+export type AuditTargetType = "User" | "Memorial";
 
 // ---------- Auth ----------
 
@@ -223,7 +236,7 @@ export interface ActiveItemResponse {
 export interface AdminAuditLogRequest extends ListParams {
   token: string
   action?: AuditAction
-  targetType?: string
+  targetType?: AuditTargetType
   userId?: string
   from?: string
   to?: string

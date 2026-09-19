@@ -29,10 +29,10 @@ export async function getAuditLogs({
         size,
         sort: sort && sort.map(s => `${s.field},${s.direction}`).join(",")
       }
-    }).json()
-    return v.parse(AuditLogSchema, response)
+    }).json();
+    return v.parse(AuditLogSchema, response);
   } catch (error) {
-    throw error
+    throw error;
   }
 }
 
@@ -42,14 +42,14 @@ export async function getAuditLogDLQSize({
   token: string
 }) {
   try {
-    const response = await http.get("admin/audit-logs/dlq/sizes", {
+    const response = await http.get("admin/audit-logs/dlq/size", {
       headers: {
         Authorization: `Bearer ${token}`
       }
-    }).json()
-    return v.parse(v.number(), response)
+    }).json();
+    return v.parse(v.number(), response);
   } catch (error) {
-    throw error
+    throw error;
   }
 }
 
