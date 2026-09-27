@@ -119,8 +119,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
         </div>
       ) : null}
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border bg-surface px-4 md:px-6">
+      <div className="relative flex min-w-0 flex-1 flex-col h-dvh overflow-y-scroll">
+        <header className="sticky top-0 flex h-14 shrink-0 items-center gap-3 border-b border-border bg-surface px-4 md:px-6">
           <button
             aria-label="메뉴 열기"
             onClick={() => setMobileOpen(true)}

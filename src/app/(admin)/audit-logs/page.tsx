@@ -158,21 +158,22 @@ export default async function AuditLogsPage(props: PageProps<"/audit-logs">) {
             {auditDLQResponse}
           </p>
         </div>
-        <div className="flex flex-wrap items-end gap-3">
+        <form className="flex flex-wrap items-end gap-3">
+          {/* Enter 키 암묵적 제출 차단: 폼의 기본(첫 번째) submit 버튼이 disabled면 브라우저가 제출하지 않음 */}
+          <button type="submit" disabled hidden aria-hidden="true" />
           <Field>
             <Input
               id="max"
               name="max"
               type="number"
-              defaultValue={100}
+              min={1}
+              defaultValue={auditDLQResponse > 100 ? 100 : auditDLQResponse}
               className="w-32"
             />
           </Field>
-          {/* <Button variant="secondary">재처리</Button> */}
-          {/* <Button variant="destructive">전체 비우기</Button> */}
-          <ReprocessButton token={token} />
-          <PurgeButton token={token} />
-        </div>
+          <ReprocessButton />
+          <PurgeButton />
+        </form>
       </div>
     </div>
   );

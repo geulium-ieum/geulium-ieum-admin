@@ -1,38 +1,29 @@
 "use client"
 
-import { HTTPError } from "ky";
+import { useActionState, useEffect } from "react"
+import { reprocess } from "@/lib/server/auditLog"
 import { Button } from "../ui/Button"
-import { toast } from "../ui/toast";
-import { auditService } from "@/lib/service/auditLog";
+import { toast } from "../ui/toast"
 
-export default function ReprocessButton({
-  token
-}: {
-  token: string | undefined
-}) {
-  const handleReprocess = async () => {
-    try {
-      await auditService.post.DLQReprocess({
-        token: token ? token : "",
-        max: 100
-      });
-    } catch (error) {
-      if (error instanceof HTTPError) {
-        console.error(error);
-        toast.add({
-          type: "error",
-          title: "오류가 발생했습니다",
-          description: error.data.message,
-          timeout: 3000
-        });
-      }
-    }
-  };
+export default function ReprocessButton() {
+  const [state, action, pending] = useActionState(reprocess, {})
+
+  useEffect(() => {
+    if (!state.error) return
+    toast.add({
+      type: "error",
+      title: "오류가 발생했습니다",
+      description: state.error,
+      timeout: 3000
+    })
+  }, [state])
 
   return (
     <Button
+      type="submit"
       variant="secondary"
-      onClick={handleReprocess}
+      formAction={action}
+      disabled={pending}
     >
       재처리
     </Button>
