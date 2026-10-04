@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Badge } from "@/components/ui/Badge";
+import { StatusBadge } from "@/components/admin/StatusBadge";
 import { Button } from "@/components/ui/Button";
 import { Pagination } from "@/components/ui/Pagination";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -38,9 +38,9 @@ export default async function GuestbooksPage(props: PageProps<"/content/guestboo
                     </Link>
                   </td>
                   <td className="px-5 py-3">
-                    <Badge tone={entry.isApproved ? "success" : "warning"}>
+                    <StatusBadge tone={entry.isApproved ? "success" : "warning"}>
                       {entry.isApproved ? "승인됨" : "승인 대기"}
-                    </Badge>
+                    </StatusBadge>
                   </td>
                   <td className="px-5 py-3">
                     <div className="flex justify-end gap-1.5">
@@ -49,7 +49,7 @@ export default async function GuestbooksPage(props: PageProps<"/content/guestboo
                           승인
                         </Button>
                       ) : null}
-                      <Button size="sm" variant="danger">
+                      <Button size="sm" variant="destructive">
                         삭제
                       </Button>
                     </div>
@@ -64,7 +64,6 @@ export default async function GuestbooksPage(props: PageProps<"/content/guestboo
         page={slice.number}
         first={slice.first}
         last={slice.last}
-        numberOfElements={slice.numberOfElements}
         size={slice.size}
         basePath="/content/guestbooks"
       />

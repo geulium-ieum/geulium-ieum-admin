@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { Badge } from "@/components/ui/Badge";
+import { StatusBadge } from "@/components/admin/StatusBadge";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { mockAnnouncements } from "@/lib/mock/announcements";
@@ -44,12 +44,12 @@ export default function AnnouncementsPage() {
                       </Link>
                     </td>
                     <td className="px-5 py-3">
-                      {a.isPinned ? <Badge tone="accent">고정</Badge> : null}
+                      {a.isPinned ? <StatusBadge tone="accent">고정</StatusBadge> : null}
                     </td>
                     <td className="px-5 py-3">
-                      <Badge tone={a.isPublished ? "success" : "neutral"}>
+                      <StatusBadge tone={a.isPublished ? "success" : "neutral"}>
                         {a.isPublished ? "발행됨" : "미발행"}
-                      </Badge>
+                      </StatusBadge>
                     </td>
                     <td className="px-5 py-3 text-muted-foreground">
                       {a.createdAt.slice(0, 10)}

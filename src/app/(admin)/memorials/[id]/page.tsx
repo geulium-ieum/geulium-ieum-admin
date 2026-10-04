@@ -2,9 +2,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeftIcon, FlameIcon, MessageIcon, UsersIcon } from "@/components/icons";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { MemorialStatusBadge, VisibilityBadge } from "@/components/ui/Badge";
+import { MemorialStatusBadge, VisibilityBadge } from "@/components/admin/StatusBadge";
 import { Button } from "@/components/ui/Button";
-import { Field, inputClass } from "@/components/ui/Field";
+import { Field, FieldDescription, FieldLabel } from "@/components/ui/Field";
+import { Textarea } from "@/components/ui/textarea";
 import { mockMemorialStats, mockMemorials } from "@/lib/mock/memorials";
 
 export default async function MemorialDetailPage(props: PageProps<"/memorials/[id]">) {
@@ -97,19 +98,21 @@ export default async function MemorialDetailPage(props: PageProps<"/memorials/[i
             <p className="mb-4 text-xs text-muted-foreground">
               내용을 확인한 뒤 승인 또는 반려하세요.
             </p>
-            <Button variant="primary" className="mb-3 w-full">
+            <Button className="mb-3 w-full">
               추모관 승인
             </Button>
-            <Field label="반려 사유" htmlFor="reason" hint="반려 시 신청자에게 함께 전달됩니다.">
-              <textarea
+            <Field>
+              <FieldLabel htmlFor="reason">반려 사유</FieldLabel>
+              <Textarea
                 id="reason"
                 name="reason"
                 rows={3}
                 placeholder="반려 사유를 입력하세요"
-                className={`${inputClass} resize-none`}
+                className="resize-none"
               />
+              <FieldDescription>반려 시 신청자에게 함께 전달됩니다.</FieldDescription>
             </Field>
-            <Button variant="danger" className="mt-3 w-full">
+            <Button variant="destructive" className="mt-3 w-full">
               추모관 반려
             </Button>
           </div>

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeftIcon, BookIcon, FlameIcon, MessageIcon } from "@/components/icons";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { RoleBadge, Badge } from "@/components/ui/Badge";
+import { RoleBadge, StatusBadge } from "@/components/admin/StatusBadge";
 import { Button } from "@/components/ui/Button";
 import { Field } from "@/components/ui/Field";
 import { mockUserDetails } from "@/lib/mock/users";
@@ -37,9 +37,9 @@ export default async function UserDetailPage(props: PageProps<"/users/[id]">) {
                 <div className="flex flex-wrap items-center gap-2">
                   <p className="text-base font-semibold text-foreground">{user.name}</p>
                   <RoleBadge role={user.role} />
-                  <Badge tone={user.isActive ? "success" : "neutral"}>
+                  <StatusBadge tone={user.isActive ? "success" : "neutral"}>
                     {user.isActive ? "활성" : "비활성"}
-                  </Badge>
+                  </StatusBadge>
                 </div>
                 <dl className="grid grid-cols-1 gap-x-6 gap-y-1.5 text-sm sm:grid-cols-2">
                   <div className="flex justify-between gap-4 sm:justify-start">

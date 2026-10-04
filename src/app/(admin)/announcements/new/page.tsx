@@ -2,7 +2,9 @@ import Link from "next/link";
 import { ArrowLeftIcon } from "@/components/icons";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Button } from "@/components/ui/Button";
-import { Field, inputClass } from "@/components/ui/Field";
+import { Field, FieldLabel } from "@/components/ui/Field";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function NewAnnouncementPage() {
   return (
@@ -19,24 +21,25 @@ export default function NewAnnouncementPage() {
       </div>
 
       <form className="max-w-2xl space-y-4 rounded-2xl border border-border bg-surface p-6">
-        <Field label="제목" htmlFor="title">
-          <input
+        <Field>
+          <FieldLabel htmlFor="title">제목</FieldLabel>
+          <Input
             id="title"
             name="title"
             type="text"
             placeholder="예: 추석 연휴 고객센터 운영 안내"
             maxLength={200}
-            className={inputClass}
           />
         </Field>
 
-        <Field label="내용" htmlFor="content">
-          <textarea
+        <Field>
+          <FieldLabel htmlFor="content">내용</FieldLabel>
+          <Textarea
             id="content"
             name="content"
             rows={8}
             placeholder="공지 내용을 입력하세요"
-            className={`${inputClass} resize-none`}
+            className="resize-none"
           />
         </Field>
 
@@ -46,7 +49,7 @@ export default function NewAnnouncementPage() {
         </label>
 
         <div className="flex items-center gap-2 pt-2">
-          <Button type="submit" variant="primary">
+          <Button type="submit">
             작성 완료
           </Button>
           <Button type="reset" variant="secondary">

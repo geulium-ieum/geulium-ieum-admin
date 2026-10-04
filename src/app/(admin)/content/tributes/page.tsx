@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Badge } from "@/components/ui/Badge";
+import { StatusBadge } from "@/components/admin/StatusBadge";
 import { Button } from "@/components/ui/Button";
 import { Pagination } from "@/components/ui/Pagination";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -45,16 +45,16 @@ export default async function TributesPage(props: PageProps<"/content/tributes">
                     </Link>
                   </td>
                   <td className="px-5 py-3">
-                    <Badge tone={tribute.isPublic ? "success" : "neutral"}>
+                    <StatusBadge tone={tribute.isPublic ? "success" : "neutral"}>
                       {tribute.isPublic ? "공개" : "비공개"}
-                    </Badge>
+                    </StatusBadge>
                   </td>
                   <td className="px-5 py-3 text-muted-foreground">
                     {tribute.createdAt.slice(0, 10)}
                   </td>
                   <td className="px-5 py-3">
                     <div className="flex justify-end">
-                      <Button size="sm" variant="danger">
+                      <Button size="sm" variant="destructive">
                         삭제
                       </Button>
                     </div>
@@ -69,7 +69,6 @@ export default async function TributesPage(props: PageProps<"/content/tributes">
         page={slice.number}
         first={slice.first}
         last={slice.last}
-        numberOfElements={slice.numberOfElements}
         size={slice.size}
         basePath="/content/tributes"
       />

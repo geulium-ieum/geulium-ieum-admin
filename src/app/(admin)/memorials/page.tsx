@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { MemorialStatusBadge, VisibilityBadge } from "@/components/ui/Badge";
-import { Button, LinkButton } from "@/components/ui/Button";
+import { MemorialStatusBadge, VisibilityBadge } from "@/components/admin/StatusBadge";
+import { Button, buttonVariants } from "@/components/ui/Button";
 import { Pagination } from "@/components/ui/Pagination";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { mockMemorials, mockPendingMemorials } from "@/lib/mock/memorials";
@@ -88,14 +88,14 @@ export default async function MemorialsPage(props: PageProps<"/memorials">) {
                             <Button size="sm" variant="secondary">
                               승인
                             </Button>
-                            <Button size="sm" variant="danger">
+                            <Button size="sm" variant="destructive">
                               반려
                             </Button>
                           </>
                         ) : null}
-                        <LinkButton size="sm" variant="ghost" href={`/memorials/${memorial.id}`}>
+                        <Link href={`/memorials/${memorial.id}`} className={buttonVariants({ size: "sm", variant: "ghost" })}>
                           상세
-                        </LinkButton>
+                        </Link>
                       </div>
                     </td>
                   </tr>
@@ -108,7 +108,6 @@ export default async function MemorialsPage(props: PageProps<"/memorials">) {
           page={slice.number}
           first={slice.first}
           last={slice.last}
-          numberOfElements={slice.numberOfElements}
           size={slice.size}
           basePath="/memorials"
           extraParams={tab === "pending" ? { tab: "pending" } : undefined}

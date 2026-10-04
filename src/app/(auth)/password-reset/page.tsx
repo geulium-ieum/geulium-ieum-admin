@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ArrowLeftIcon } from "@/components/icons";
 import { Button } from "@/components/ui/Button";
-import { Field, inputClass } from "@/components/ui/Field";
+import { Field, FieldLabel } from "@/components/ui/Field";
+import { Input } from "@/components/ui/input";
 
 export default function PasswordResetRequestPage() {
   return (
@@ -14,18 +15,18 @@ export default function PasswordResetRequestPage() {
       </div>
 
       <form className="space-y-4">
-        <Field label="이메일" htmlFor="email">
-          <input
+        <Field>
+          <FieldLabel htmlFor="email">이메일</FieldLabel>
+          <Input
             id="email"
             name="email"
             type="email"
             autoComplete="email"
             placeholder="admin@geulium-ieum.com"
-            className={inputClass}
           />
         </Field>
 
-        <Button type="submit" variant="primary" className="w-full">
+        <Button type="submit" className="w-full">
           인증 코드 받기
         </Button>
       </form>

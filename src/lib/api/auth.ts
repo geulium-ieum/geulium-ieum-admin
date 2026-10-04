@@ -1,6 +1,43 @@
-import { TokenSchema } from '@/constants/user';
+import { TokenSchema, UserListSchema } from '@/constants/user';
 import { http } from '../utils';
 import * as v from 'valibot';
+
+export async function getUserList({
+  token,
+  searchParams
+}: {
+  token: string
+  searchParams: {
+    page?: number
+    size?: number
+    sort?: ["id" | "email" | "name" | "role" | "isActive" | "lastLogin" | "createdAt", "asc" | "desc"]
+    // {
+    //   id: string
+    //   email: string
+    //   name: string
+    //   role: 'USER' | 'ADMIN' | 'SUPER_ADMIN'
+    //   isActive: boolean,
+    //   lastLoginAt: string | null,
+    //   createdAt: string
+    // }
+  }
+}) {
+  try {
+    const response = await http.get("admin/user/list", {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      },
+      searchParams: {
+        page: searchParams.page,
+        size: searchParams.size,
+        sort: searchParams.sort && searchParams.sort.join(",")
+      }
+    }).json()
+    return v.parse(UserListSchema, response)
+  } catch (error) {
+    throw error
+  }
+}
 
 export async function postLogin({
   email,

@@ -31,7 +31,7 @@ export default async function AuditLogsPage(props: PageProps<"/audit-logs">) {
   const page = Number(sp.page ?? 1) || 1;
   const token = await getAccessToken();
   const auditLogResponse = await auditService.get.auditLogs({
-    token: token ? token : "",
+    token: token ?? "",
     action,
     targetType,
     userId,

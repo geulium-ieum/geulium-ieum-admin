@@ -2,9 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeftIcon } from "@/components/icons";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { Badge } from "@/components/ui/Badge";
+import { StatusBadge } from "@/components/admin/StatusBadge";
 import { Button } from "@/components/ui/Button";
-import { Field, inputClass } from "@/components/ui/Field";
+import { Field, FieldLabel } from "@/components/ui/Field";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { mockAnnouncements } from "@/lib/mock/announcements";
 
 export default async function AnnouncementDetailPage(
@@ -28,35 +30,36 @@ export default async function AnnouncementDetailPage(
           title={announcement.title}
           description={`작성 ${announcement.createdAt.slice(0, 10)} · 수정 ${announcement.updatedAt.slice(0, 10)}`}
           actions={
-            <Badge tone={announcement.isPublished ? "success" : "neutral"}>
+            <StatusBadge tone={announcement.isPublished ? "success" : "neutral"}>
               {announcement.isPublished
                 ? `발행됨 · ${announcement.publishedAt?.slice(0, 10)}`
                 : "미발행"}
-            </Badge>
+            </StatusBadge>
           }
         />
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <form className="space-y-4 rounded-2xl border border-border bg-surface p-6 lg:col-span-2">
-          <Field label="제목" htmlFor="title">
-            <input
+          <Field>
+            <FieldLabel htmlFor="title">제목</FieldLabel>
+            <Input
               id="title"
               name="title"
               type="text"
               defaultValue={announcement.title}
               maxLength={200}
-              className={inputClass}
             />
           </Field>
 
-          <Field label="내용" htmlFor="content">
-            <textarea
+          <Field>
+            <FieldLabel htmlFor="content">내용</FieldLabel>
+            <Textarea
               id="content"
               name="content"
               rows={10}
               defaultValue={announcement.content}
-              className={`${inputClass} resize-none`}
+              className="resize-none"
             />
           </Field>
 
@@ -72,7 +75,7 @@ export default async function AnnouncementDetailPage(
           </label>
 
           <div className="flex items-center gap-2 pt-2">
-            <Button type="submit" variant="primary">
+            <Button type="submit">
               변경사항 저장
             </Button>
           </div>
@@ -86,7 +89,7 @@ export default async function AnnouncementDetailPage(
                 ? "이미 발행된 공지입니다."
                 : "발행하면 사용자에게 즉시 노출됩니다."}
             </p>
-            <Button variant="primary" className="w-full" disabled={announcement.isPublished}>
+            <Button className="w-full" disabled={announcement.isPublished}>
               {announcement.isPublished ? "발행 완료" : "지금 발행"}
             </Button>
           </div>
@@ -94,7 +97,7 @@ export default async function AnnouncementDetailPage(
           <div className="rounded-2xl border border-rose-200 bg-surface p-5 dark:border-rose-500/20">
             <h2 className="mb-1 text-sm font-semibold text-foreground">위험 구역</h2>
             <p className="mb-4 text-xs text-muted-foreground">삭제한 공지는 복구할 수 없습니다.</p>
-            <Button variant="danger" className="w-full">
+            <Button variant="destructive" className="w-full">
               공지 삭제
             </Button>
           </div>

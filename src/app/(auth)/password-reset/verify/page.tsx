@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ArrowLeftIcon } from "@/components/icons";
 import { Button } from "@/components/ui/Button";
-import { Field, inputClass } from "@/components/ui/Field";
+import { Field, FieldDescription, FieldLabel } from "@/components/ui/Field";
+import { Input } from "@/components/ui/input";
 
 export default function PasswordResetVerifyPage() {
   return (
@@ -16,43 +17,40 @@ export default function PasswordResetVerifyPage() {
       </div>
 
       <form className="space-y-4">
-        <Field label="이메일" htmlFor="email">
-          <input
+        <Field>
+          <FieldLabel htmlFor="email">이메일</FieldLabel>
+          <Input
             id="email"
             name="email"
             type="email"
             autoComplete="email"
             placeholder="admin@geulium-ieum.com"
-            className={inputClass}
           />
         </Field>
 
-        <Field label="인증 코드" htmlFor="code">
-          <input
+        <Field>
+          <FieldLabel htmlFor="code">인증 코드</FieldLabel>
+          <Input
             id="code"
             name="code"
             type="text"
             placeholder="이메일로 받은 코드를 입력하세요"
-            className={inputClass}
           />
         </Field>
 
-        <Field
-          label="새 비밀번호"
-          htmlFor="newPassword"
-          hint="영문·숫자·특수문자를 포함해 8~20자로 입력하세요."
-        >
-          <input
+        <Field>
+          <FieldLabel htmlFor="newPassword">새 비밀번호</FieldLabel>
+          <Input
             id="newPassword"
             name="newPassword"
             type="password"
             autoComplete="new-password"
             placeholder="새 비밀번호 입력"
-            className={inputClass}
           />
+          <FieldDescription>영문·숫자·특수문자를 포함해 8~20자로 입력하세요.</FieldDescription>
         </Field>
 
-        <Button type="submit" variant="primary" className="w-full">
+        <Button type="submit" className="w-full">
           비밀번호 변경
         </Button>
       </form>

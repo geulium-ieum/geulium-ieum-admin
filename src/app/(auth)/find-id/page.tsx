@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ArrowLeftIcon } from "@/components/icons";
 import { Button } from "@/components/ui/Button";
-import { Field, inputClass } from "@/components/ui/Field";
+import { Field, FieldDescription, FieldLabel } from "@/components/ui/Field";
+import { Input } from "@/components/ui/input";
 
 export default function FindIdPage() {
   return (
@@ -14,29 +15,30 @@ export default function FindIdPage() {
       </div>
 
       <form className="space-y-4">
-        <Field label="이름" htmlFor="name">
-          <input
+        <Field>
+          <FieldLabel htmlFor="name">이름</FieldLabel>
+          <Input
             id="name"
             name="name"
             type="text"
             autoComplete="name"
             placeholder="홍길동"
-            className={inputClass}
           />
         </Field>
 
-        <Field label="휴대전화번호" htmlFor="phone" hint="- 없이 숫자만 입력해도 됩니다.">
-          <input
+        <Field>
+          <FieldLabel htmlFor="phone">휴대전화번호</FieldLabel>
+          <Input
             id="phone"
             name="phone"
             type="tel"
             autoComplete="tel"
             placeholder="010-1234-5678"
-            className={inputClass}
           />
+          <FieldDescription>- 없이 숫자만 입력해도 됩니다.</FieldDescription>
         </Field>
 
-        <Button type="submit" variant="primary" className="w-full">
+        <Button type="submit" className="w-full">
           아이디 찾기
         </Button>
       </form>

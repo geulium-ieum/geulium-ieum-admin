@@ -2,7 +2,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { StatCard } from "@/components/admin/StatCard";
 import { RankedList } from "@/components/admin/RankedList";
-// import { RoleBadge } from "@/components/ui/Badge";
+// import { RoleBadge } from "@/components/admin/StatusBadge";
 import {
   BookIcon,
   FlameIcon,
