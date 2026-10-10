@@ -2,7 +2,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { StatCard } from "@/components/admin/StatCard";
 import { RankedList } from "@/components/admin/RankedList";
-// import { RoleBadge } from "@/components/admin/StatusBadge";
+import { RoleBadge } from "@/components/admin/StatusBadge";
 import {
   BookIcon,
   FlameIcon,
@@ -80,7 +80,7 @@ export default function DashboardPage() {
                     </td>
                     <td className="px-5 py-2.5 text-muted-foreground">{user.email}</td>
                     <td className="px-5 py-2.5">
-                      {/* <RoleBadge role={user.role} /> */}
+                      <RoleBadge role={user.role} />
                     </td>
                     <td className="px-5 py-2.5 text-muted-foreground">
                       {user.createdAt.slice(0, 10)}

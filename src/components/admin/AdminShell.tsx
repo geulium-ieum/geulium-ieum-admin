@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { redirect, RedirectType, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { FlowerIcon, MenuIcon, XIcon } from "@/components/icons";
 import { adminNav } from "@/lib/admin-nav";
 import { LogOutIcon } from "lucide-react";
 import { Button } from "../ui/Button";
 import { deleteToken } from "@/lib/server/auth";
+import { RoleBadge } from "./StatusBadge";
 
 function Logo() {
   return (
@@ -48,7 +49,7 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
-function AccountFooter() {
+function AccountFooter({ role }: { role?: string }) {
   const handleLogout = async () => {
     try {
       await deleteToken();
@@ -64,7 +65,7 @@ function AccountFooter() {
       </span>
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium text-foreground">관리자</p>
-        {/* <RoleBadge role="ADMIN" /> */}
+        {role ? <RoleBadge role={role} /> : null}
       </div>
       <Button
         variant="ghost"
@@ -78,7 +79,7 @@ function AccountFooter() {
   );
 }
 
-export function AdminShell({ children }: { children: ReactNode }) {
+export function AdminShell({ children, role }: { children: ReactNode; role?: string }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
   const current = adminNav.find((item) => pathname.startsWith(item.match));
@@ -91,7 +92,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
           <Logo />
         </div>
         <NavList />
-        <AccountFooter />
+        <AccountFooter role={role} />
       </aside>
 
       {/* 모바일 드로어 */}
@@ -114,7 +115,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
               </button>
             </div>
             <NavList onNavigate={() => setMobileOpen(false)} />
-            <AccountFooter />
+            <AccountFooter role={role} />
           </aside>
         </div>
       ) : null}

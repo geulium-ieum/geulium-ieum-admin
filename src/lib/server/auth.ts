@@ -48,8 +48,10 @@ export async function setToken(data: TokenResponse) {
 export async function deleteToken() {
   try {
     const cookieStore = await cookies();
-    const refreshToken = cookieStore.get('accessToken')!.value;
-    await userService.post.logout({ refreshToken })
+    const refreshToken = cookieStore.get('refreshToken')?.value;
+    if (refreshToken) {
+      await userService.post.logout({ refreshToken })
+    }
     cookieStore.delete('accessToken');
     cookieStore.delete('refreshToken');
     redirect("/login", RedirectType.replace);

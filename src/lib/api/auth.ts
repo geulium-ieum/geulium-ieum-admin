@@ -1,6 +1,7 @@
 import { TokenSchema, UserListSchema } from '@/constants/user';
 import { http } from '../utils';
 import * as v from 'valibot';
+import { SortDirection, UserSortField } from '@/types/api';
 
 export async function getUserList({
   token,
@@ -10,7 +11,7 @@ export async function getUserList({
   searchParams: {
     page?: number
     size?: number
-    sort?: ["id" | "email" | "name" | "role" | "isActive" | "lastLogin" | "createdAt", "asc" | "desc"]
+    sort?: [UserSortField, SortDirection]
     // {
     //   id: string
     //   email: string

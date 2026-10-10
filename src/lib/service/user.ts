@@ -1,4 +1,4 @@
-import { ListParams, LoginRequest } from "@/types/api";
+import { ListParams, LoginRequest, SortDirection, UserSortField } from "@/types/api";
 import { getUserList, postLogin, postLogout, postRefreshToken } from "../api/auth";
 
 class UserService {
@@ -11,7 +11,7 @@ class UserService {
       searchParams: {
         page?: number
         size?: number
-        sort?: ["id" | "email" | "name" | "role" | "isActive" | "lastLogin" | "createdAt", "asc" | "desc"]
+        sort?: [UserSortField, SortDirection]
       }
     }) => {
       return await getUserList({

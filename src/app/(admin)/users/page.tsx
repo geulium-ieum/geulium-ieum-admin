@@ -1,27 +1,48 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { StatusBadge } from "@/components/admin/StatusBadge";
+import { RoleBadge, StatusBadge } from "@/components/admin/StatusBadge";
 import { Button } from "@/components/ui/Button";
 import { Pagination } from "@/components/ui/Pagination";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { userService } from "@/lib/service/user";
 import { getAccessToken } from "@/lib/server/auth";
+import { SortableTh } from "@/components/ui/SortableTh";
+import type { UserSortField } from "@/types/api";
+
+const SORTABLE_FIELDS: UserSortField[] = ["name", "email", "role", "isActive", "lastLoginAt", "createdAt"];
 
 export default async function UsersPage(props: PageProps<"/users">) {
   const searchParams = await props.searchParams
-  const page = Number(searchParams.page ?? 0) || 0
+  // URL의 page는 1부터 시작하고, API(Spring)는 0부터 시작한다.
+  const page = Math.max(1, Math.floor(Number(searchParams.page ?? 1)) || 1)
   const size = Number(searchParams.size ?? 20) || 20
-  // TODO: sort
   const sort = typeof searchParams.sort === "string" ? searchParams.sort : undefined
+  const [sortFieldParam, sortDirectionParam] = sort ? sort.split(",") : []
+  const sortField = SORTABLE_FIELDS.find((field) => field === sortFieldParam)
+  const sortDirection = (["asc", "desc"] as const).find((direction) => direction === sortDirectionParam)
+  const currentSort = sortField && sortDirection ? { field: sortField, direction: sortDirection } : undefined
   const token = await getAccessToken();
   const userResponse = await userService.get.list({
     token: token ?? "",
     searchParams: {
-      page,
+      page: page - 1,
       size,
-      // sort
+      sort: currentSort && [currentSort.field, currentSort.direction]
     }
   })
+  const sizeParams: Record<string, string> =
+    typeof searchParams.size === "string" ? { size: searchParams.size } : {}
+  const sortProps = {
+    currentField: currentSort?.field,
+    currentDirection: currentSort?.direction,
+    basePath: "/users",
+    extraParams: sizeParams,
+  }
+  // 페이지를 이동해도 정렬 기준과 페이지 크기를 유지한다.
+  const paginationParams = {
+    ...sizeParams,
+    ...(currentSort ? { sort: `${currentSort.field},${currentSort.direction}` } : {}),
+  }
 
   return (
     <div className="space-y-6">
@@ -38,12 +59,12 @@ export default async function UsersPage(props: PageProps<"/users">) {
             <table className="w-full min-w-205 text-left text-sm">
               <thead>
                 <tr className="text-xs text-muted-foreground">
-                  <th className="px-5 py-3 font-medium">이름</th>
-                  <th className="px-5 py-3 font-medium">이메일</th>
-                  <th className="px-5 py-3 font-medium">역할</th>
-                  <th className="px-5 py-3 font-medium">상태</th>
-                  <th className="px-5 py-3 font-medium">마지막 로그인</th>
-                  <th className="px-5 py-3 font-medium">가입일</th>
+                  <SortableTh field="name" {...sortProps}>이름</SortableTh>
+                  <SortableTh field="email" {...sortProps}>이메일</SortableTh>
+                  <SortableTh field="role" {...sortProps}>역할</SortableTh>
+                  <SortableTh field="isActive" {...sortProps}>상태</SortableTh>
+                  <SortableTh field="lastLoginAt" {...sortProps}>마지막 로그인</SortableTh>
+                  <SortableTh field="createdAt" {...sortProps}>가입일</SortableTh>
                   <th className="px-5 py-3 font-medium text-right">작업</th>
                 </tr>
               </thead>
@@ -57,7 +78,7 @@ export default async function UsersPage(props: PageProps<"/users">) {
                     </td>
                     <td className="px-5 py-3 text-muted-foreground">{user.email}</td>
                     <td className="px-5 py-3">
-                      {/* <RoleBadge role={user.role} /> */}
+                      <RoleBadge role={user.role} />
                     </td>
                     <td className="px-5 py-3">
                       <StatusBadge tone={user.isActive ? "success" : "neutral"}>
@@ -88,13 +109,14 @@ export default async function UsersPage(props: PageProps<"/users">) {
             </table>
           </div>
         )}
-        {/* <Pagination
-          page={userResponse.page}
-          first={userResponse.first}
-          last={userResponse.last}
-          size={userResponse.size}
+        <Pagination
+          page={page}
+          size={size}
+          totalPages={userResponse.page.totalPages}
+          totalElements={userResponse.page.totalElements}
           basePath="/users"
-        /> */}
+          extraParams={paginationParams}
+        />
       </div>
     </div>
   );

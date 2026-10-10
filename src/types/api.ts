@@ -23,7 +23,7 @@ export interface ListParams {
     'updatedBy' |
     'createdAt' |
     'updatedAt',
-    direction: 'asc' | 'desc'
+    direction: SortDirection
   }[];
 }
 
@@ -55,6 +55,8 @@ export interface Slice<T> {
 }
 
 export type UserRole = "USER" | "ADMIN" | "SUPER_ADMIN";
+export type UserSortField = "id" | "email" | "name" | "role" | "isActive" | "lastLoginAt" | "createdAt";
+export type SortDirection = "asc" | "desc";
 export type MemorialStatus = "PENDING" | "REJECT" | "APPROVED" | "CANCEL";
 export type MemorialVisibility = "PUBLIC" | "PRIVATE" | "FAMILY_ONLY";
 export type AuditAction = "CREATE" | "UPDATE" | "DELETE" | "LOGIN" | "LOGOUT";
