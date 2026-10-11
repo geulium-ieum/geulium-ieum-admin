@@ -16,6 +16,7 @@ export default async function MemorialsPage(props: PageProps<"/memorials">) {
   const searchParams = await props.searchParams;
   const tab = searchParams.tab === "pending" ? "pending" : "all";
   const page = Number(searchParams.page ?? 0) || 0;
+  // TODO: API 호출 함수, 타입
   const source = tab === "pending" ? mockPendingMemorials : mockMemorials;
   const slice = toSlice(source, { page, size: 10 });
 
@@ -33,8 +34,8 @@ export default async function MemorialsPage(props: PageProps<"/memorials">) {
             href={t.href}
             className={`px-3 py-2 text-sm font-medium transition-colors ${
               tab === t.key
-                ? "border-b-2 border-accent text-accent"
-                : "text-muted-foreground hover:text-foreground"
+                ? "border-b-2 border-accent"
+                : "text-muted-foreground"
             }`}
           >
             {t.label}
@@ -67,7 +68,7 @@ export default async function MemorialsPage(props: PageProps<"/memorials">) {
                 {slice.content.map((memorial) => (
                   <tr key={memorial.id}>
                     <td className="px-5 py-3 font-medium text-foreground">
-                      <Link href={`/memorials/${memorial.id}`} className="hover:text-accent">
+                      <Link href={`/memorials/${memorial.id}`}>
                         {memorial.deceasedName}
                       </Link>
                     </td>

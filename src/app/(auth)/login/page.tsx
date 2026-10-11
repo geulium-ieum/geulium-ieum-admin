@@ -1,6 +1,7 @@
 'use client'
 
 import Link from "next/link";
+import { unstable_rethrow } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/Field";
 import { toast } from "@/components/ui/toast";
@@ -9,7 +10,6 @@ import { useForm } from "@tanstack/react-form";
 import { login } from "@/lib/server/auth";
 
 export default function LoginPage() {
-
   const form = useForm({
     defaultValues: {
       email: '',
@@ -19,10 +19,12 @@ export default function LoginPage() {
       try {
         await login(value);
       } catch (error) {
-        console.error(error);
+        unstable_rethrow(error);
+        console.error("error: ", error);
         toast.add({
           type: "error",
-          title: "로그인에 실패했습니다"
+          title: "로그인에 실패했습니다",
+          timeout: 3000
         });
       }
     }
