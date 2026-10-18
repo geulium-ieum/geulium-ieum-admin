@@ -1,4 +1,4 @@
-import { ListParams, LoginRequest, SortDirection, UserSortField } from "@/types/api";
+import { LoginRequest, SortDirection, UserSortField } from "@/types/api";
 import { getUserList, postLogin, postLogout, postRefreshToken } from "../api/auth";
 
 class UserService {
@@ -16,11 +16,7 @@ class UserService {
     }) => {
       return await getUserList({
         token,
-        searchParams: {
-          page: searchParams.page,
-          size: searchParams.size,
-          sort: searchParams.sort
-        }
+        searchParams
       })
     }
   }

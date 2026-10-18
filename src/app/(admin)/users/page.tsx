@@ -21,7 +21,7 @@ export default async function UsersPage(props: PageProps<"/users">) {
   const sortField = SORTABLE_FIELDS.find((field) => field === sortFieldParam)
   const sortDirection = (["asc", "desc"] as const).find((direction) => direction === sortDirectionParam)
   const currentSort = sortField && sortDirection ? { field: sortField, direction: sortDirection } : undefined
-  const token = await getAccessToken();
+  const token = await getAccessToken()
   const userResponse = await userService.get.list({
     token: token ?? "",
     searchParams: {

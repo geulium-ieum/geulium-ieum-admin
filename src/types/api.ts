@@ -57,6 +57,7 @@ export interface Slice<T> {
 export type UserRole = "USER" | "ADMIN" | "SUPER_ADMIN";
 export type UserSortField = "id" | "email" | "name" | "role" | "isActive" | "lastLoginAt" | "createdAt";
 export type SortDirection = "asc" | "desc";
+export type MemorialSortField = "id" | "deceasedName" | "birthDate" | "deathDate" | "location" | "biography" | "photoUrl" | "visibility" | "status" | "createdBy" | "updatedBy" | "createdAt" | "updatedAt"
 export type MemorialStatus = "PENDING" | "REJECT" | "APPROVED" | "CANCEL";
 export type MemorialVisibility = "PUBLIC" | "PRIVATE" | "FAMILY_ONLY";
 export type AuditAction = "CREATE" | "UPDATE" | "DELETE" | "LOGIN" | "LOGOUT";

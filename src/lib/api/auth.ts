@@ -12,15 +12,6 @@ export async function getUserList({
     page?: number
     size?: number
     sort?: [UserSortField, SortDirection]
-    // {
-    //   id: string
-    //   email: string
-    //   name: string
-    //   role: 'USER' | 'ADMIN' | 'SUPER_ADMIN'
-    //   isActive: boolean,
-    //   lastLoginAt: string | null,
-    //   createdAt: string
-    // }
   }
 }) {
   try {

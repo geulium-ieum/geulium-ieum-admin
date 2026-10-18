@@ -3,22 +3,58 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { MemorialStatusBadge, VisibilityBadge } from "@/components/admin/StatusBadge";
 import { Button, buttonVariants } from "@/components/ui/Button";
 import { Pagination } from "@/components/ui/Pagination";
+import { SortableTh } from "@/components/ui/SortableTh";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { mockMemorials, mockPendingMemorials } from "@/lib/mock/memorials";
-import { toSlice } from "@/lib/mock/slice";
+import { MemorialSortField } from "@/types/api";
+import { getAccessToken } from "@/lib/server/auth";
+import { memorialService } from "@/lib/service/memorial";
 
 const tabs = [
   { key: "all", label: "전체", href: "/memorials" },
   { key: "pending", label: "승인 대기", href: "/memorials?tab=pending" },
 ] as const;
 
+const SORTABLE_FIELDS: MemorialSortField[] = ["id", "deceasedName", "birthDate", "deathDate", "location", "biography", "photoUrl", "visibility", "status", "createdBy", "updatedBy", "createdAt", "updatedAt"];
+
 export default async function MemorialsPage(props: PageProps<"/memorials">) {
   const searchParams = await props.searchParams;
+  const page = Math.max(1, Math.floor(Number(searchParams.page ?? 1)) || 1)
+  const size = Number(searchParams.size ?? 20) || 20
+  const sort = typeof searchParams.sort === "string" ? searchParams.sort : undefined
+  const [sortFieldParam, sortDirectionParam] = sort ? sort.split(",") : []
+  const sortField = SORTABLE_FIELDS.find((field) => field === sortFieldParam)
+  const sortDirection = (["asc", "desc"] as const).find((direction) => direction === sortDirectionParam)
+  const currentSort = sortField && sortDirection ? { field: sortField, direction: sortDirection } : undefined
+  const token = await getAccessToken()
+  const memorialResponse = await memorialService.get.list({
+    token: token ?? "",
+    searchParams: {
+      page: page - 1,
+      size,
+      sort: currentSort && [currentSort.field, currentSort.direction]
+    }
+  });
+  const pendingMemorials = {
+    ...memorialResponse,
+    content: memorialResponse.content.filter(el => el.status === "PENDING")
+  }
+  const sizeParams: Record<string, string> =
+    typeof searchParams.size === "string" ? { size: searchParams.size } : {}
   const tab = searchParams.tab === "pending" ? "pending" : "all";
-  const page = Number(searchParams.page ?? 0) || 0;
-  // TODO: API 호출 함수, 타입
-  const source = tab === "pending" ? mockPendingMemorials : mockMemorials;
-  const slice = toSlice(source, { page, size: 10 });
+  const tabParams: Record<string, string> = tab === "pending" ? { tab } : {}
+  const sortProps = {
+    currentField: currentSort?.field,
+    currentDirection: currentSort?.direction,
+    basePath: "/memorials",
+    extraParams: { ...sizeParams, ...tabParams },
+  }
+  // 페이지를 이동해도 탭, 정렬 기준, 페이지 크기를 유지한다.
+  const paginationParams = {
+    ...sizeParams,
+    ...tabParams,
+    ...(currentSort ? { sort: `${currentSort.field},${currentSort.direction}` } : {}),
+  }
+  const source = tab === "pending" ? pendingMemorials : memorialResponse;
 
   return (
     <div className="space-y-6">
@@ -41,7 +77,7 @@ export default async function MemorialsPage(props: PageProps<"/memorials">) {
             {t.label}
             {t.key === "pending" ? (
               <span className="ml-1.5 rounded-full bg-surface-muted px-1.5 py-0.5 text-xs text-muted-foreground">
-                {mockPendingMemorials.length}
+                {pendingMemorials.content.length}
               </span>
             ) : null}
           </Link>
@@ -49,23 +85,23 @@ export default async function MemorialsPage(props: PageProps<"/memorials">) {
       </div>
 
       <div className="rounded-2xl border border-border bg-surface">
-        {slice.content.length === 0 ? (
+        {source.content.length === 0 ? (
           <EmptyState title="추모관이 없습니다" />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[760px] text-left text-sm">
               <thead>
                 <tr className="text-xs text-muted-foreground">
-                  <th className="px-5 py-3 font-medium">고인명</th>
-                  <th className="px-5 py-3 font-medium">상태</th>
-                  <th className="px-5 py-3 font-medium">공개범위</th>
-                  <th className="px-5 py-3 font-medium">생성자 ID</th>
-                  <th className="px-5 py-3 font-medium">등록일</th>
+                  <SortableTh field="deceasedName" {...sortProps}>고인명</SortableTh>
+                  <SortableTh field="status" {...sortProps}>상태</SortableTh>
+                  <SortableTh field="visibility" {...sortProps}>공개범위</SortableTh>
+                  <SortableTh field="createdBy" {...sortProps}>생성자 ID</SortableTh>
+                  <SortableTh field="createdAt" {...sortProps}>등록일</SortableTh>
                   <th className="px-5 py-3 font-medium text-right">작업</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {slice.content.map((memorial) => (
+                {source.content.map((memorial) => (
                   <tr key={memorial.id}>
                     <td className="px-5 py-3 font-medium text-foreground">
                       <Link href={`/memorials/${memorial.id}`}>
@@ -106,12 +142,12 @@ export default async function MemorialsPage(props: PageProps<"/memorials">) {
           </div>
         )}
         <Pagination
-          page={slice.number}
-          first={slice.first}
-          last={slice.last}
-          size={slice.size}
+          page={page}
+          first={source.first}
+          last={source.last}
+          size={source.size}
           basePath="/memorials"
-          extraParams={tab === "pending" ? { tab: "pending" } : undefined}
+          extraParams={paginationParams}
         />
       </div>
     </div>
