@@ -3,17 +3,48 @@ import { StatusBadge } from "@/components/admin/StatusBadge";
 import { Button } from "@/components/ui/Button";
 import { Pagination } from "@/components/ui/Pagination";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { mockTributes } from "@/lib/mock/content";
-import { toSlice } from "@/lib/mock/slice";
+import { TributeSortField } from "@/types/api";
+import { getAccessToken } from "@/lib/server/auth";
+import { tributeService } from "@/lib/service/tribute";
+
+const SORTABLE_FIELDS: TributeSortField[] = ["content", "memorialId", "userId", "isPublic", "createdAt"];
 
 export default async function TributesPage(props: PageProps<"/content/tributes">) {
+  // TODO: 추모관 API, 작성자 API 호출 추가
   const searchParams = await props.searchParams;
-  const page = Number(searchParams.page ?? 0) || 0;
-  const slice = toSlice(mockTributes, { page, size: 10 });
+  const page = Math.max(1, Math.floor(Number(searchParams.page ?? 1)) || 1)
+  const size = Number(searchParams.size ?? 20) || 20
+  const sort = typeof searchParams.sort === "string" ? searchParams.sort : undefined
+  const [sortFieldParam, sortDirectionParam] = sort ? sort.split(",") : []
+  const sortField = SORTABLE_FIELDS.find((field) => field === sortFieldParam)
+  const sortDirection = (["asc", "desc"] as const).find((direction) => direction === sortDirectionParam)
+  const currentSort = sortField && sortDirection ? { field: sortField, direction: sortDirection } : undefined
+  const token = await getAccessToken()
+  const tributeResponse = await tributeService.get.list({
+    token: token ?? "",
+    searchParams: {
+      page: page - 1,
+      size,
+      sort: currentSort && [currentSort.field, currentSort.direction]
+    }
+  })
+  const sizeParams: Record<string, string> =
+    typeof searchParams.size === "string" ? { size: searchParams.size } : {}
+  const sortProps = {
+    currentField: currentSort?.field,
+    currentDirection: currentSort?.direction,
+    basePath: "/content/tributes",
+    extraParams: sizeParams,
+  }
+  // 페이지를 이동해도 정렬 기준과 페이지 크기를 유지한다.
+  const paginationParams = {
+    ...sizeParams,
+    ...(currentSort ? { sort: `${currentSort.field},${currentSort.direction}` } : {}),
+  }
 
   return (
     <div className="rounded-2xl border border-border bg-surface">
-      {slice.content.length === 0 ? (
+      {tributeResponse.content.length === 0 ? (
         <EmptyState title="추모글이 없습니다" />
       ) : (
         <div className="overflow-x-auto">
@@ -29,7 +60,7 @@ export default async function TributesPage(props: PageProps<"/content/tributes">
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {slice.content.map((tribute) => (
+              {tributeResponse.content.map((tribute) => (
                 <tr key={tribute.id}>
                   <td className="max-w-xs truncate px-5 py-3 text-foreground">
                     {tribute.content}
@@ -66,11 +97,12 @@ export default async function TributesPage(props: PageProps<"/content/tributes">
         </div>
       )}
       <Pagination
-        page={slice.number}
-        first={slice.first}
-        last={slice.last}
-        size={slice.size}
+        page={page}
+        size={size}
+        totalPages={tributeResponse.page.totalPages}
+        totalElements={tributeResponse.page.totalElements}
         basePath="/content/tributes"
+        extraParams={paginationParams}
       />
     </div>
   );

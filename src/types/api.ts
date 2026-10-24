@@ -62,6 +62,7 @@ export type MemorialStatus = "PENDING" | "REJECT" | "APPROVED" | "CANCEL";
 export type MemorialVisibility = "PUBLIC" | "PRIVATE" | "FAMILY_ONLY";
 export type AuditAction = "CREATE" | "UPDATE" | "DELETE" | "LOGIN" | "LOGOUT";
 export type AuditTargetType = "User" | "Memorial";
+export type TributeSortField = "id" | "memorialId" | "userId" | "content" | "isPublic" | "createdAt" | "updatedAt";
 
 // ---------- Auth ----------
 
