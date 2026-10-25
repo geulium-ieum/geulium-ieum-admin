@@ -12,6 +12,22 @@ export const UserSchema = v.object({
     marketingAgreed: v.boolean()
 })
 
+export const UserAdminSchema = v.object({
+    id: v.string(),
+    email: v.string(),
+    name: v.string(),
+    phone: v.string(),
+    role: v.picklist(['USER', 'ADMIN', 'SUPER_ADMIN']),
+    profilePhotoUrl: v.nullable(v.string()),
+    isActive: v.boolean(),
+    lastLoginAt: v.nullable(v.string()),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+    tributeCount: v.number(),
+    offeringCount: v.number(),
+    guestbookCount: v.number()
+})
+
 export const UserListSchema = v.object({
     content: v.array(
         v.object({

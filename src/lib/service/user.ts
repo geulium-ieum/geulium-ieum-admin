@@ -1,5 +1,6 @@
 import { LoginRequest, SortDirection, UserSortField } from "@/types/api";
-import { getUserList, postLogin, postLogout, postRefreshToken } from "../api/auth";
+import { postLogin, postLogout, postRefreshToken } from "../api/auth";
+import { getUser, getUserList } from "../api/user";
 
 class UserService {
   public get = {
@@ -18,6 +19,15 @@ class UserService {
         token,
         searchParams
       })
+    },
+    user: async ({
+      token,
+      id
+    }: {
+      token: string
+      id: string
+    }) => {
+      return await getUser({ token, id })
     }
   }
   public post = {

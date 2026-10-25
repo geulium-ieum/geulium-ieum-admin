@@ -1,4 +1,4 @@
-import { MemorialListSchema } from "@/constants/memorial";
+import { MemorialListSchema, MemorialSchema } from "@/constants/memorial";
 import { http } from "../utils";
 import * as v from "valibot";
 import { MemorialSortField, SortDirection } from "@/types/api";
@@ -26,6 +26,25 @@ export async function getMemorialList({
       }
     }).json();
     return v.parse(MemorialListSchema, response);
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getMemorialDetail({
+  token,
+  id
+}: {
+  token: string
+  id: string
+}) {
+  try {
+    const response = await http.get(`admin/memorial/${id}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    })
+    return v.parse(MemorialSchema, response);
   } catch (error) {
     throw error;
   }

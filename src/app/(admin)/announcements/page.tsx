@@ -39,7 +39,7 @@ export default function AnnouncementsPage() {
                 {mockAnnouncements.map((a) => (
                   <tr key={a.id}>
                     <td className="px-5 py-3 font-medium text-foreground">
-                      <Link href={`/announcements/${a.id}`} className="hover:text-accent">
+                      <Link href={`/announcements/${a.id}`} className="hover:underline">
                         {a.title}
                       </Link>
                     </td>

@@ -103,7 +103,7 @@ export default async function MemorialsPage(props: PageProps<"/memorials">) {
               <tbody className="divide-y divide-border">
                 {source.content.map((memorial) => (
                   <tr key={memorial.id}>
-                    <td className="px-5 py-3 font-medium text-foreground">
+                    <td className="px-5 py-3 font-medium text-foreground hover:underline">
                       <Link href={`/memorials/${memorial.id}`}>
                         {memorial.deceasedName}
                       </Link>

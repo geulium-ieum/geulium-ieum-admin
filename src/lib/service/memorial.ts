@@ -1,5 +1,5 @@
 import { MemorialSortField, SortDirection } from "@/types/api"
-import { getMemorialList } from "../api/memorial"
+import { getMemorialDetail, getMemorialList } from "../api/memorial"
 
 class MemorialService {
   public get = {
@@ -19,7 +19,15 @@ class MemorialService {
         searchParams
       });
     },
-    
+    memorial: async ({
+      token,
+      id
+    }: {
+      token: string
+      id: string
+    }) => {
+      return await getMemorialDetail({ token, id })
+    }
   }
 }
 

@@ -21,3 +21,16 @@ export const MemorialListSchema = v.object({
     })
   )
 })
+
+export const MemorialSchema = v.object({
+  memorialId: v.string(),
+  deceasedName: v.string(),
+  birthDate: v.string(),
+  deathDate: v.string(),
+  biography: v.string(),
+  photoUrl: v.string(),
+  visibility: v.string(),
+  tributeCount: v.number(),
+  offeringCount: v.number(),
+  memberCount: v.number()
+})

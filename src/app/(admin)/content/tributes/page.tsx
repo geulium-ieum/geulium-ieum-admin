@@ -6,6 +6,9 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { TributeSortField } from "@/types/api";
 import { getAccessToken } from "@/lib/server/auth";
 import { tributeService } from "@/lib/service/tribute";
+import { memorialService } from "@/lib/service/memorial";
+import { userService } from "@/lib/service/user";
+import { SortableTh } from "@/components/ui/SortableTh";
 
 const SORTABLE_FIELDS: TributeSortField[] = ["content", "memorialId", "userId", "isPublic", "createdAt"];
 
@@ -51,11 +54,11 @@ export default async function TributesPage(props: PageProps<"/content/tributes">
           <table className="w-full min-w-[720px] text-left text-sm">
             <thead>
               <tr className="text-xs text-muted-foreground">
-                <th className="px-5 py-3 font-medium">내용</th>
-                <th className="px-5 py-3 font-medium">추모관</th>
-                <th className="px-5 py-3 font-medium">작성자</th>
-                <th className="px-5 py-3 font-medium">공개</th>
-                <th className="px-5 py-3 font-medium">작성일</th>
+                <SortableTh field="content" {...sortProps}>내용</SortableTh>
+                <SortableTh field="memorial" {...sortProps}>추모관</SortableTh>
+                <SortableTh field="user" {...sortProps}>작성자</SortableTh>
+                <SortableTh field="isPublic" {...sortProps}>공개</SortableTh>
+                <SortableTh field="createdAt" {...sortProps}>작성일</SortableTh>
                 <th className="px-5 py-3 font-medium text-right">작업</th>
               </tr>
             </thead>
@@ -66,12 +69,12 @@ export default async function TributesPage(props: PageProps<"/content/tributes">
                     {tribute.content}
                   </td>
                   <td className="px-5 py-3 text-muted-foreground">
-                    <Link href={`/memorials/${tribute.memorialId}`} className="hover:text-accent">
+                    <Link href={`/memorials/${tribute.memorialId}`} className="hover:text-foreground">
                       #{tribute.memorialId}
                     </Link>
                   </td>
                   <td className="px-5 py-3 text-muted-foreground">
-                    <Link href={`/users/${tribute.userId}`} className="hover:text-accent">
+                    <Link href={`/users/${tribute.userId}`} className="hover:text-foreground">
                       #{tribute.userId}
                     </Link>
                   </td>
