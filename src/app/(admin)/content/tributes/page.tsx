@@ -6,14 +6,11 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { TributeSortField } from "@/types/api";
 import { getAccessToken } from "@/lib/server/auth";
 import { tributeService } from "@/lib/service/tribute";
-import { memorialService } from "@/lib/service/memorial";
-import { userService } from "@/lib/service/user";
 import { SortableTh } from "@/components/ui/SortableTh";
 
 const SORTABLE_FIELDS: TributeSortField[] = ["content", "memorialId", "userId", "isPublic", "createdAt"];
 
 export default async function TributesPage(props: PageProps<"/content/tributes">) {
-  // TODO: 추모관 API, 작성자 API 호출 추가
   const searchParams = await props.searchParams;
   const page = Math.max(1, Math.floor(Number(searchParams.page ?? 1)) || 1)
   const size = Number(searchParams.size ?? 20) || 20

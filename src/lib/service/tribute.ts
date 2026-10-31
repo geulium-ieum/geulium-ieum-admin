@@ -14,14 +14,10 @@ class TributeService {
         sort?: [TributeSortField, SortDirection]
       }
     }) => {
-      try {
-        return await getTributeList({
-          token,
-          searchParams
-        })
-      } catch (error) {
-        throw error
-      }
+      return await getTributeList({
+        token,
+        searchParams
+      })
     }
   }
   public delete = {
@@ -32,14 +28,10 @@ class TributeService {
       token: string
       id: string
     }) => {
-      try {
-        return await deleteTribute({
-          token,
-          id
-        })      
-      } catch (error) {
-        throw error
-      }
+      return await deleteTribute({
+        token,
+        id
+      })
     }
   }
 }

@@ -1,9 +1,16 @@
+import { AnnouncementSortField, SortDirection } from "@/types/api";
 import { getAnnouncementList } from "../api/announcement";
 
 class Announcement {
   public get = {
-    list: async () => {
-      return getAnnouncementList();
+    list: async ({ searchParams }: {
+      searchParams: {
+        page?: number
+        size?: number
+        sort?: [AnnouncementSortField, SortDirection]
+      }
+    }) => {
+      return getAnnouncementList({ searchParams });
     }
   }
 };

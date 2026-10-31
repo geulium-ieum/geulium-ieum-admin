@@ -63,6 +63,7 @@ export type MemorialVisibility = "PUBLIC" | "PRIVATE" | "FAMILY_ONLY";
 export type AuditAction = "CREATE" | "UPDATE" | "DELETE" | "LOGIN" | "LOGOUT";
 export type AuditTargetType = "User" | "Memorial";
 export type TributeSortField = "id" | "memorialId" | "userId" | "content" | "isPublic" | "createdAt" | "updatedAt";
+export type AnnouncementSortField = "title" | "content" | "isPinned" | "isPublished" | "updatedAt";
 
 // ---------- Auth ----------
 
