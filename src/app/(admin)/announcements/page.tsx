@@ -11,7 +11,6 @@ import { Pagination } from "@/components/ui/Pagination";
 const SORTABLE_FIELDS: AnnouncementSortField[] = ["title", "content", "isPinned", "isPublished", "updatedAt"];
 
 export default async function AnnouncementsPage(props: PageProps<"/announcements">) {
-  // TODO: Pagination 수정
   const searchParams = await props.searchParams;
   const page = Math.max(1, Math.floor(Number(searchParams.page ?? 1)) || 1)
   const size = Number(searchParams.size ?? 20) || 20
@@ -106,7 +105,7 @@ export default async function AnnouncementsPage(props: PageProps<"/announcements
           page={page}
           first={announcementResponse.first}
           last={announcementResponse.last}
-          size={10}
+          size={size}
           basePath="/announcements"
         />
       </div>
