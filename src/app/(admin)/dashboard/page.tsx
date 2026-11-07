@@ -14,7 +14,8 @@ import { mockActiveMemorials, mockActiveUsers, mockSystemStats } from "@/lib/moc
 import { mockUsers } from "@/lib/mock/users";
 import { mockMemorials } from "@/lib/mock/memorials";
 
-export default function DashboardPage() {
+export default function DashboardPage(props: PageProps<"/dashboard">) {
+  // TODO: Dashboard 데이터 연동
   const recentUsers = mockUsers.slice(0, 5);
 
   const activeUsers = mockActiveUsers.map((item) => {

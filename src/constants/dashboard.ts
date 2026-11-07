@@ -9,7 +9,7 @@ export const dashboardStatsSchema = v.object({
   guestbooks: v.number()
 })
 
-export const dashboardRecentUser = v.object({
+export const dashboardRecentUserSchema = v.object({
   ...ListSchema.entries,
   content: v.array(v.object({
     id: v.string(),
@@ -22,12 +22,12 @@ export const dashboardRecentUser = v.object({
   }))
 })
 
-export const dashboardActiveUser = v.array(v.object({
+export const dashboardActiveUserSchema = v.array(v.object({
   id: v.string(),
   count: v.number()
 }))
 
-export const dashboardActiveMemorial = v.array(v.object({
+export const dashboardActiveMemorialSchema = v.array(v.object({
   id: v.string(),
   count: v.number()
 }))
