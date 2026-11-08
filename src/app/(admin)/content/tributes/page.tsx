@@ -11,7 +11,7 @@ import { SortableTh } from "@/components/ui/SortableTh";
 const SORTABLE_FIELDS: TributeSortField[] = ["content", "memorialId", "userId", "isPublic", "createdAt"];
 
 export default async function TributesPage(props: PageProps<"/content/tributes">) {
-  const searchParams = await props.searchParams;
+  const searchParams = await props.searchParams
   const page = Math.max(1, Math.floor(Number(searchParams.page ?? 1)) || 1)
   const size = Number(searchParams.size ?? 20) || 20
   const sort = typeof searchParams.sort === "string" ? searchParams.sort : undefined

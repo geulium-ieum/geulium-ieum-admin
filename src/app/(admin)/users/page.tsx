@@ -72,7 +72,7 @@ export default async function UsersPage(props: PageProps<"/users">) {
                 {userResponse.content.map((user) => (
                   <tr key={user.id} className="align-middle">
                     <td className="px-5 py-3 font-medium text-foreground">
-                      <Link href={`/users/${user.id}`} className="hover:text-accent">
+                      <Link href={`/users/${user.id}`} className="hover:underline">
                         {user.name}
                       </Link>
                     </td>

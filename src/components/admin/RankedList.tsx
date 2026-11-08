@@ -2,7 +2,7 @@ export function RankedList({
   items,
   unit,
 }: {
-  items: { id: number; label: string; sublabel?: string; count: number }[];
+  items: { id: string; label: string; sublabel?: string; count: number }[];
   unit: string;
 }) {
   const max = Math.max(1, ...items.map((i) => i.count));

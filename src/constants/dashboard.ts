@@ -17,7 +17,7 @@ export const dashboardRecentUserSchema = v.object({
     name: v.string(),
     role: v.picklist(["SUPER_ADMIN", "ADMIN", "USER"]),
     isActive: v.boolean(),
-    lastLoginAt: v.string(),
+    lastLoginAt: v.nullable(v.string()),
     createdAt: v.string()
   }))
 })

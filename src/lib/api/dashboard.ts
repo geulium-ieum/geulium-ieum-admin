@@ -5,10 +5,10 @@ import { RecentUserSortField, SortDirection } from "@/types/api";
 
 export async function getActiveMemorial({
   token,
-  days
+  days = 30
 }: {
   token: string
-  days: number
+  days?: number
 }) {
   try {
     const response = await http.get("admin/dashboard/active-memorial", {
@@ -27,13 +27,13 @@ export async function getActiveMemorial({
 
 export async function getActiveUser({
   token,
-  days
+  days = 30
 }: {
   token: string
-  days: number
+  days?: number
 }) {
   try {
-    const response = await http.get("admin/dashboard/active-memorial", {
+    const response = await http.get("admin/dashboard/active-user", {
       headers: {
         "Authorization": `Bearer ${token}`
       },
@@ -83,7 +83,7 @@ export async function getStats({
   try {
     const response = await http.get("admin/dashboard/stats", {
       headers: {
-        "Authentication": `Bearer ${token}`
+        "Authorization": `Bearer ${token}`
       }
     }).json()
     return v.parse(dashboardStatsSchema, response)

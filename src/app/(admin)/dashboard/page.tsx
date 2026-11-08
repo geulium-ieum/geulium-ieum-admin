@@ -10,28 +10,73 @@ import {
   MessageIcon,
   UsersIcon,
 } from "@/components/icons";
-import { mockActiveMemorials, mockActiveUsers, mockSystemStats } from "@/lib/mock/dashboard";
-import { mockUsers } from "@/lib/mock/users";
+import { mockActiveMemorials } from "@/lib/mock/dashboard";
 import { mockMemorials } from "@/lib/mock/memorials";
+import { dashboardService } from "@/lib/service/dashboard";
+import { getAccessToken } from "@/lib/server/auth";
+import { userService } from "@/lib/service/user";
+import { memorialService } from "@/lib/service/memorial";
 
-export default function DashboardPage(props: PageProps<"/dashboard">) {
-  // TODO: Dashboard 데이터 연동
-  const recentUsers = mockUsers.slice(0, 5);
+export default async function DashboardPage(props: PageProps<"/dashboard">) {
+  const searchParams = await props.searchParams
+  const token = await getAccessToken()
 
-  const activeUsers = mockActiveUsers.map((item) => {
-    const user = mockUsers.find((u) => u.id === item.id);
-    return {
-      id: item.id,
-      label: user?.name ?? `사용자 #${item.id}`,
-      sublabel: user?.email,
-      count: item.count,
-    };
-  });
+  const stats = await dashboardService.get.stats({ token: token ?? "" })
 
+  const recentUsersResponse = await dashboardService.get.recentUser({
+    token: token ?? "",
+    searchParams: {
+      sort: ["createdAt", "asc"]
+    }
+  })
+
+  const recentUsers = recentUsersResponse.content.slice(0, 5)
+
+  const activeUsersResponse = await dashboardService.get.activeUser({
+    token: token ?? ""
+  })
+  const activeUsers = await Promise.all(
+    activeUsersResponse.map(
+      async (activeUser) => {
+        const userResponse = await userService.get.user({
+          token: token ?? "",
+          id: activeUser.id
+        })
+        return {
+          id: activeUser.id,
+          label: userResponse.name,
+          sublabel: userResponse.email,
+          count: activeUser.count
+        }
+      }
+    )
+  )
+
+  // const activeMemorialResponse = await dashboardService.get.activeMemorial({
+  //   token: token ?? ""
+  // })
+  // const activeMemorials = await Promise.all(
+  //   activeMemorialResponse.map(
+  //     async (activeMemorial) => {
+  //       const memorialResponse = await memorialService.get.memorial({
+  //         token: token ?? "",
+  //         id: activeMemorial.id
+  //       })
+  //       return {
+  //         id: activeMemorial.id,
+  //         label: memorialResponse.deceasedName,
+  //         sublabel: memorialResponse.biography,
+  //         count: activeMemorial.count
+  //       }
+  //     }
+  //   )
+  // )
+
+  // TODO: 500 에러 처리되면 실제 데이터로 적용
   const activeMemorials = mockActiveMemorials.map((item) => {
     const memorial = mockMemorials.find((m) => m.id === item.id);
     return {
-      id: item.id,
+      id: item.id.toString(),
       label: memorial?.deceasedName ?? `추모관 #${item.id}`,
       sublabel: memorial?.location || undefined,
       count: item.count,
@@ -46,11 +91,11 @@ export default function DashboardPage(props: PageProps<"/dashboard">) {
       />
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        <StatCard label="총 사용자" value={mockSystemStats.users} icon={UsersIcon} />
-        <StatCard label="총 추모관" value={mockSystemStats.memorials} icon={FlowerIcon} />
-        <StatCard label="총 추모글" value={mockSystemStats.tributes} icon={MessageIcon} />
-        <StatCard label="총 헌화·분향" value={mockSystemStats.offerings} icon={FlameIcon} />
-        <StatCard label="총 방명록" value={mockSystemStats.guestbooks} icon={BookIcon} />
+        <StatCard label="총 사용자" value={stats.users} icon={UsersIcon} />
+        <StatCard label="총 추모관" value={stats.memorials} icon={FlowerIcon} />
+        <StatCard label="총 추모글" value={stats.tributes} icon={MessageIcon} />
+        <StatCard label="총 헌화·분향" value={stats.offerings} icon={FlameIcon} />
+        <StatCard label="총 방명록" value={stats.guestbooks} icon={BookIcon} />
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">

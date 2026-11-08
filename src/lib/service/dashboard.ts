@@ -8,7 +8,7 @@ class DashboardService {
       days
     }: {
       token: string;
-      days: number;
+      days?: number;
     }) => {
       return await getActiveMemorial({
         token,
@@ -20,7 +20,7 @@ class DashboardService {
       days
     }: {
       token: string;
-      days: number;
+      days?: number;
     }) => {
       return await getActiveUser({
         token,
