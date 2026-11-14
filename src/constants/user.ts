@@ -16,7 +16,7 @@ export const UserAdminSchema = v.object({
     id: v.string(),
     email: v.string(),
     name: v.string(),
-    phone: v.string(),
+    phone: v.nullable(v.string()),
     role: v.picklist(['USER', 'ADMIN', 'SUPER_ADMIN']),
     profilePhotoUrl: v.nullable(v.string()),
     isActive: v.boolean(),

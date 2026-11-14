@@ -5,14 +5,26 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { RoleBadge, StatusBadge } from "@/components/admin/StatusBadge";
 import { Button } from "@/components/ui/Button";
 import { Field } from "@/components/ui/Field";
-import { mockUserDetails } from "@/lib/mock/users";
 import { Label } from "@/components/ui/label";
+import { userService } from "@/lib/service/user";
+import { getAccessToken } from "@/lib/server/auth";
+import { HTTPError } from "ky";
 
 export default async function UserDetailPage(props: PageProps<"/users/[id]">) {
   const { id } = await props.params;
-  const user = mockUserDetails[Number(id)];
-  if (!user) notFound();
+  let user;
+  try {
+    const token = await getAccessToken();
+    user = await userService.get.user({ id, token: token ?? "" });
+    console.log("user", user)
+  } catch (error) {
+    console.error(error)
+    if (error instanceof HTTPError) {
+      notFound();
+    }
+  }
 
+  if (!user) return <></>;
   return (
     <div className="space-y-6">
       <div>
@@ -57,7 +69,7 @@ export default async function UserDetailPage(props: PageProps<"/users/[id]">) {
                   <div className="flex justify-between gap-4 sm:justify-start">
                     <dt className="text-muted-foreground">마지막 로그인</dt>
                     <dd className="text-foreground">
-                      {user.lastLoginAt.slice(0, 16).replace("T", " ")}
+                      {user.lastLoginAt && user.lastLoginAt.slice(0, 16).replace("T", " ")}
                     </dd>
                   </div>
                 </dl>
