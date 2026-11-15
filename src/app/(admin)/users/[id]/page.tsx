@@ -16,9 +16,7 @@ export default async function UserDetailPage(props: PageProps<"/users/[id]">) {
   try {
     const token = await getAccessToken();
     user = await userService.get.user({ id, token: token ?? "" });
-    console.log("user", user)
   } catch (error) {
-    console.error(error)
     if (error instanceof HTTPError) {
       notFound();
     }

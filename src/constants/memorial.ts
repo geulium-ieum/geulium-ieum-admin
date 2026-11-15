@@ -29,7 +29,7 @@ export const MemorialSchema = v.object({
   deathDate: v.string(),
   biography: v.string(),
   photoUrl: v.string(),
-  visibility: v.string(),
+  visibility: v.picklist(["PUBLIC", "PRIVATE"]),
   tributeCount: v.number(),
   offeringCount: v.number(),
   memberCount: v.number()

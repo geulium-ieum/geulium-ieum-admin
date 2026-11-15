@@ -2,6 +2,7 @@ import { MemorialListSchema, MemorialSchema } from "@/constants/memorial";
 import { http } from "../utils";
 import * as v from "valibot";
 import { MemorialSortField, SortDirection } from "@/types/api";
+import { getAccessToken } from "../server/auth";
 
 export async function getMemorialList({
   token,
@@ -43,8 +44,42 @@ export async function getMemorialDetail({
       headers: {
         "Authorization": `Bearer ${token}`
       }
-    })
+    }).json();
     return v.parse(MemorialSchema, response);
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function postMemorialApprove({
+  id
+}: {
+  id: string
+}) {
+  try {
+    const token = await getAccessToken();
+    await http.get(`admin/memorial/${id}/approve`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function postMemorialReject({
+  id
+}: {
+  id: string
+}) {
+  try {
+    const token = await getAccessToken();
+    await http.get(`admin/memorial/${id}/reject`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    })
   } catch (error) {
     throw error;
   }
