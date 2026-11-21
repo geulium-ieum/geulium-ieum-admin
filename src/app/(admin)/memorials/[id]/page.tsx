@@ -3,16 +3,12 @@ import { notFound } from "next/navigation";
 import { ArrowLeftIcon, FlameIcon, MessageIcon, UsersIcon } from "@/components/icons";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { MemorialStatusBadge, VisibilityBadge } from "@/components/admin/StatusBadge";
-import { Button } from "@/components/ui/Button";
-import { Field, FieldDescription, FieldLabel } from "@/components/ui/Field";
-import { Textarea } from "@/components/ui/textarea";
 import { HTTPError } from "ky";
 import { getAccessToken } from "@/lib/server/auth";
 import { memorialService } from "@/lib/service/memorial";
 import Action from "./_organisms/Action";
 
 export default async function MemorialDetailPage(props: PageProps<"/memorials/[id]">) {
-  // TODO: admin/memorial/${id} response 데이터 추가 요청 필요
   const { id } = await props.params;
   let memorial;
   try {
@@ -46,25 +42,25 @@ export default async function MemorialDetailPage(props: PageProps<"/memorials/[i
         <div className="space-y-4 lg:col-span-2">
           <div className="rounded-2xl border border-border bg-surface p-5">
             <div className="mb-3 flex flex-wrap items-center gap-2">
-              {/* <MemorialStatusBadge status={memorial.status} /> */}
+              <MemorialStatusBadge status={memorial.status} />
               <VisibilityBadge visibility={memorial.visibility} />
             </div>
             <dl className="grid grid-cols-1 gap-x-6 gap-y-1.5 text-sm sm:grid-cols-2">
               <div className="flex justify-between gap-4 sm:justify-start">
                 <dt className="text-muted-foreground">장소</dt>
-                {/* <dd className="text-foreground">{memorial.location || "미등록"}</dd> */}
+                <dd className="text-foreground">{memorial.location || "미등록"}</dd>
               </div>
               <div className="flex justify-between gap-4 sm:justify-start">
                 <dt className="text-muted-foreground">등록일</dt>
-                {/* <dd className="text-foreground">{memorial.createdAt.slice(0, 10)}</dd> */}
+                <dd className="text-foreground">{memorial.createdAt.slice(0, 10)}</dd>
               </div>
               <div className="flex justify-between gap-4 sm:justify-start">
                 <dt className="text-muted-foreground">등록자 ID</dt>
-                {/* <dd className="text-foreground">#{memorial.createdBy}</dd> */}
+                <dd className="text-foreground">#{memorial.createdBy}</dd>
               </div>
               <div className="flex justify-between gap-4 sm:justify-start">
                 <dt className="text-muted-foreground">최종 수정</dt>
-                {/* <dd className="text-foreground">{memorial.updatedAt.slice(0, 10)}</dd> */}
+                <dd className="text-foreground">{memorial.updatedAt ? memorial.updatedAt.slice(0, 10) : "-"}</dd>
               </div>
             </dl>
             <div className="mt-4 border-t border-border pt-4">
@@ -80,7 +76,7 @@ export default async function MemorialDetailPage(props: PageProps<"/memorials/[i
               </span>
               <div>
                 <p className="text-xs text-muted-foreground">추모글</p>
-                {/* <p className="text-base font-semibold text-foreground">{stats.tributeCount}</p> */}
+                <p className="text-base font-semibold text-foreground">{memorial.tributeCount}</p>
               </div>
             </div>
             <div className="flex items-center gap-3 rounded-2xl border border-border bg-surface p-4">
@@ -89,7 +85,7 @@ export default async function MemorialDetailPage(props: PageProps<"/memorials/[i
               </span>
               <div>
                 <p className="text-xs text-muted-foreground">헌화·분향</p>
-                {/* <p className="text-base font-semibold text-foreground">{stats.offeringCount}</p> */}
+                <p className="text-base font-semibold text-foreground">{memorial.offeringCount}</p>
               </div>
             </div>
             <div className="flex items-center gap-3 rounded-2xl border border-border bg-surface p-4">
@@ -98,13 +94,14 @@ export default async function MemorialDetailPage(props: PageProps<"/memorials/[i
               </span>
               <div>
                 <p className="text-xs text-muted-foreground">가족 구성원</p>
-                {/* <p className="text-base font-semibold text-foreground">{stats.memberCount}</p> */}
+                <p className="text-base font-semibold text-foreground">{memorial.memberCount}</p>
               </div>
             </div>
           </div>
         </div>
-
-        <Action />
+        {memorial.status !== "APPROVED" && (
+          <Action />
+        )}
       </div>
     </div>
   );

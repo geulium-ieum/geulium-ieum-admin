@@ -30,6 +30,11 @@ export const MemorialSchema = v.object({
   biography: v.string(),
   photoUrl: v.string(),
   visibility: v.picklist(["PUBLIC", "PRIVATE"]),
+  location: v.string(),
+  status: v.picklist(["PENDING", "REJECT", "APPROVED", "CANCEL"]),
+  createdAt: v.string(),
+  createdBy: v.string(),
+  updatedAt: v.nullable(v.string()),
   tributeCount: v.number(),
   offeringCount: v.number(),
   memberCount: v.number()

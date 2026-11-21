@@ -7,6 +7,7 @@ import { memorialService } from "@/lib/service/memorial";
 import { useParams } from "next/navigation";
 
 export default function Action() {
+  // TODO: 승인 여부에 따라 노출
   const { id } = useParams()
 
   const handleApproveMemorial = async () => {
