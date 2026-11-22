@@ -3,17 +3,16 @@ import { notFound } from "next/navigation";
 import { ArrowLeftIcon } from "@/components/icons";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { StatusBadge } from "@/components/admin/StatusBadge";
-import { Button } from "@/components/ui/Button";
-import { Field, FieldLabel } from "@/components/ui/Field";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { mockAnnouncements } from "@/lib/mock/announcements";
+import { announcementService } from "@/lib/service/announcement";
+import Edit from "./_organisms/Edit";
+import Publish from "./_organisms/Publish";
+import Delete from "./_organisms/Delete";
 
 export default async function AnnouncementDetailPage(
   props: PageProps<"/announcements/[id]">
 ) {
   const { id } = await props.params;
-  const announcement = mockAnnouncements.find((a) => a.id === Number(id));
+  const announcement = await announcementService.get.detail({ id });
   if (!announcement) notFound();
 
   return (
@@ -40,67 +39,14 @@ export default async function AnnouncementDetailPage(
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <form className="space-y-4 rounded-2xl border border-border bg-surface p-6 lg:col-span-2">
-          <Field>
-            <FieldLabel htmlFor="title">제목</FieldLabel>
-            <Input
-              id="title"
-              name="title"
-              type="text"
-              defaultValue={announcement.title}
-              maxLength={200}
-            />
-          </Field>
-
-          <Field>
-            <FieldLabel htmlFor="content">내용</FieldLabel>
-            <Textarea
-              id="content"
-              name="content"
-              rows={10}
-              defaultValue={announcement.content}
-              className="resize-none"
-            />
-          </Field>
-
-          <label htmlFor="isPinned" className="flex items-center gap-2 text-sm text-foreground">
-            <input
-              id="isPinned"
-              name="isPinned"
-              type="checkbox"
-              defaultChecked={announcement.isPinned}
-              className="size-4 accent-accent"
-            />
-            상단 고정
-          </label>
-
-          <div className="flex items-center gap-2 pt-2">
-            <Button type="submit">
-              변경사항 저장
-            </Button>
-          </div>
-        </form>
-
+        <Edit props={{
+          title: announcement.title,
+          content: announcement.content,
+          isPinned: announcement.isPinned
+        }} />
         <div className="space-y-4">
-          <div className="rounded-2xl border border-border bg-surface p-5">
-            <h2 className="mb-1 text-sm font-semibold text-foreground">발행</h2>
-            <p className="mb-4 text-xs text-muted-foreground">
-              {announcement.isPublished
-                ? "이미 발행된 공지입니다."
-                : "발행하면 사용자에게 즉시 노출됩니다."}
-            </p>
-            <Button className="w-full" disabled={announcement.isPublished}>
-              {announcement.isPublished ? "발행 완료" : "지금 발행"}
-            </Button>
-          </div>
-
-          <div className="rounded-2xl border border-rose-200 bg-surface p-5 dark:border-rose-500/20">
-            <h2 className="mb-1 text-sm font-semibold text-foreground">위험 구역</h2>
-            <p className="mb-4 text-xs text-muted-foreground">삭제한 공지는 복구할 수 없습니다.</p>
-            <Button variant="destructive" className="w-full">
-              공지 삭제
-            </Button>
-          </div>
+          <Publish isPublished={announcement.isPublished} />
+          <Delete />          
         </div>
       </div>
     </div>
