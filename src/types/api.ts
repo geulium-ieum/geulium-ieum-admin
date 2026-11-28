@@ -111,24 +111,24 @@ export interface MessageResponse {
 // ---------- Admin User ----------
 
 export interface AdminUserListItemResponse {
-  id: number;
+  id: string;
   email: string;
   name: string;
   role: UserRole;
   isActive: boolean;
-  lastLoginAt: string;
+  lastLoginAt: string | null;
   createdAt: string;
 }
 
 export interface AdminUserDetailResponse {
-  id: number;
+  id: string;
   email: string;
   name: string;
-  phone: string;
+  phone: string | null;
   role: UserRole;
-  profilePhotoUrl: string;
+  profilePhotoUrl: string | null;
   isActive: boolean;
-  lastLoginAt: string;
+  lastLoginAt: string | null;
   createdAt: string;
   updatedAt: string;
   tributeCount: number;
@@ -143,7 +143,7 @@ export interface RoleUpdateRequest {
 // ---------- Admin Memorial ----------
 
 export interface MemorialResponse {
-  id: number;
+  id: string;
   deceasedName: string;
   birthDate: string;
   deathDate: string;
@@ -159,7 +159,7 @@ export interface MemorialResponse {
 }
 
 export interface MemorialWithStatsResponse {
-  memorialId: number;
+  memorialid: string;
   deceasedName: string;
   birthDate: string;
   deathDate: string;
@@ -178,9 +178,9 @@ export interface RejectRequest {
 // ---------- Admin Content ----------
 
 export interface TributeResponse {
-  id: number;
-  memorialId: number;
-  userId: number;
+  id: string;
+  memorialid: string;
+  userid: string;
   content: string;
   isPublic: boolean;
   createdAt: string;
@@ -188,9 +188,9 @@ export interface TributeResponse {
 }
 
 export interface GuestbookResponse {
-  id: number;
-  memorialId: number;
-  userId: number;
+  id: string;
+  memorialid: string;
+  userid: string;
   authorName: string;
   content: string;
   isApproved: boolean;
@@ -211,10 +211,10 @@ export interface AnnouncementUpdateRequest {
 }
 
 export interface AdminAnnouncementResponse {
-  id: number;
+  id: string;
   title: string;
   content: string;
-  authorId: number;
+  authorid: string;
   isPinned: boolean;
   isPublished: boolean;
   publishedAt: string | null;
@@ -233,7 +233,7 @@ export interface SystemStatsResponse {
 }
 
 export interface ActiveItemResponse {
-  id: number;
+  id: string;
   count: number;
 }
 
@@ -249,12 +249,12 @@ export interface AdminAuditLogRequest extends ListParams {
 }
 
 export interface AdminAuditLogResponse {
-  id: number;
+  id: string;
   createdAt: string;
   action: AuditAction;
   targetType: string;
-  targetId: number;
-  userId: number;
+  targetid: string;
+  userid: string;
   ipAddress: string;
   userAgent: string;
   details: Record<string, string>;

@@ -51,14 +51,14 @@ export async function getMemorialDetail({
   }
 }
 
-export async function postMemorialApprove({
+export async function patchMemorialApprove({
   id
 }: {
   id: string
 }) {
   try {
     const token = await getAccessToken();
-    await http.get(`admin/memorial/${id}/approve`, {
+    await http.patch(`admin/memorial/${id}/approve`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -68,14 +68,14 @@ export async function postMemorialApprove({
   }
 }
 
-export async function postMemorialReject({
+export async function patchMemorialReject({
   id
 }: {
   id: string
 }) {
   try {
     const token = await getAccessToken();
-    await http.get(`admin/memorial/${id}/reject`, {
+    await http.patch(`admin/memorial/${id}/reject`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }

@@ -11,7 +11,7 @@ export default function Action() {
 
   const handleApproveMemorial = async () => {
     try {
-      await memorialService.post.approve({ id: id as string })
+      await memorialService.patch.approve({ id: id as string })
     } catch (error) {
       console.error(error)
     }
@@ -19,7 +19,7 @@ export default function Action() {
 
   const handleRejectMemorial = async () => {
     try {
-      await memorialService.post.reject({ id: id as string })
+      await memorialService.patch.reject({ id: id as string })
     } catch (error) {
       console.error(error)
     }

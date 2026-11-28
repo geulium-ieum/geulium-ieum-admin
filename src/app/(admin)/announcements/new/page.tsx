@@ -65,6 +65,7 @@ export default function NewAnnouncementPage() {
             type="text"
             placeholder="예: 추석 연휴 고객센터 운영 안내"
             maxLength={200}
+            onChange={(e) => setTitle(e.target.value)}
           />
         </Field>
 
@@ -76,11 +77,18 @@ export default function NewAnnouncementPage() {
             rows={8}
             placeholder="공지 내용을 입력하세요"
             className="resize-none"
+            onChange={(e) => setContent(e.target.value)}
           />
         </Field>
 
         <label htmlFor="isPinned" className="flex items-center gap-2 text-sm text-foreground">
-          <input id="isPinned" name="isPinned" type="checkbox" className="size-4 accent-accent" />
+          <Input
+            id="isPinned"
+            name="isPinned"
+            type="checkbox"
+            className="size-4 accent-accent"
+            onChange={(e) => setIsPinned(e.target.checked)}
+          />
           상단 고정
         </label>
 

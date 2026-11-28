@@ -1,7 +1,8 @@
-import { SortDirection, UserSortField } from "@/types/api"
+import { SortDirection, UserRole, UserSortField } from "@/types/api"
 import { http } from "../utils"
 import { UserAdminSchema, UserListSchema } from "@/constants/user"
 import * as v from "valibot"
+import { getAccessToken } from "../server/auth"
 
 export async function getUserList({
   token,
@@ -45,6 +46,65 @@ export async function getUser({
       }
     }).json()
     return v.parse(UserAdminSchema, response)
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function patchActivateUser({ id }: { id: string }) {
+  try {
+    const token = await getAccessToken()
+    await http.patch(`admin/user/${id}/activate`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    })
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function patchDeactivateUser({ id }: { id: string }) {
+  try {
+    const token = await getAccessToken()
+    await http.patch(`admin/user/${id}/deactivate`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    })
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function patchRole({
+  id,
+  role
+}: {
+  id: string
+  role: UserRole
+}) {
+  try {
+    const token = await getAccessToken()
+    await http.patch(`admin/user/${id}/role`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      },
+      json: { role }
+    })
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function deleteUser({ id }: { id: string }) {
+  try {
+    const token = await getAccessToken()
+    await http.delete(`admin/user/${id}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    })
   } catch (error) {
     throw error
   }

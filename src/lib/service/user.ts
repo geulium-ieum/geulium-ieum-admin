@@ -1,6 +1,6 @@
-import { LoginRequest, SortDirection, UserSortField } from "@/types/api";
+import { LoginRequest, SortDirection, UserRole, UserSortField } from "@/types/api";
 import { postLogin, postLogout, postRefreshToken } from "../api/auth";
-import { getUser, getUserList } from "../api/user";
+import { getUser, getUserList, patchActivateUser, patchRole, patchDeactivateUser, deleteUser } from "../api/user";
 
 class UserService {
   public get = {
@@ -39,6 +39,28 @@ class UserService {
     },
     logout: async ({ refreshToken }: { refreshToken: string }) => {
       return await postLogout({ refreshToken });
+    }
+  }
+  public patch = {
+    activate: async ({ id }: { id: string }) => {
+      return await patchActivateUser({ id });
+    },
+    deactivate: async ({ id }: { id: string }) => {
+      return await patchDeactivateUser({ id });
+    },
+    role: async ({
+      id,
+      role
+    }: {
+      id: string
+      role: UserRole
+    }) => {
+      return await patchRole({ id, role })
+    }
+  }
+  public delete = {
+    user: async ({ id }: { id: string }) => {
+      return await deleteUser({ id })
     }
   }
 }

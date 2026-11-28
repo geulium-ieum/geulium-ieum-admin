@@ -8,6 +8,7 @@ import { userService } from "@/lib/service/user";
 import { getAccessToken } from "@/lib/server/auth";
 import { SortableTh } from "@/components/ui/SortableTh";
 import type { UserSortField } from "@/types/api";
+import ActiveButton from "./_atoms/ActiveButton";
 
 const SORTABLE_FIELDS: UserSortField[] = ["name", "email", "role", "isActive", "lastLoginAt", "createdAt"];
 
@@ -93,11 +94,12 @@ export default async function UsersPage(props: PageProps<"/users">) {
                     </td>
                     <td className="px-5 py-3">
                       <div className="flex justify-end gap-1.5">
-                        <Button size="sm" variant="secondary">
-                          {user.isActive ? "비활성화" : "활성화"}
-                        </Button>
+                        <ActiveButton user={user} />
                         <Link href={`/users/${user.id}`}>
-                          <Button size="sm" variant="ghost">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                          >
                             상세
                           </Button>
                         </Link>

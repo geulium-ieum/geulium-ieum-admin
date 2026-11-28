@@ -1,5 +1,5 @@
 import { MemorialSortField, SortDirection } from "@/types/api"
-import { getMemorialDetail, getMemorialList, postMemorialApprove, postMemorialReject } from "../api/memorial"
+import { getMemorialDetail, getMemorialList, patchMemorialApprove, patchMemorialReject } from "../api/memorial"
 
 class MemorialService {
   public get = {
@@ -32,20 +32,12 @@ class MemorialService {
       })
     }
   }
-  public post = {
-    approve: async ({
-      id
-    }: {
-      id: string
-    }) => {
-      return await postMemorialApprove({ id })
+  public patch = {
+    approve: async ({ id }: { id: string }) => {
+      return await patchMemorialApprove({ id })
     },
-    reject: async ({
-      id
-    }: {
-      id: string
-    }) => {
-      return await postMemorialReject({ id })
+    reject: async ({ id }: { id: string }) => {
+      return await patchMemorialReject({ id })
     }
   }
 }

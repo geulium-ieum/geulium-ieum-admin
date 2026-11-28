@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { userService } from "@/lib/service/user";
 import { getAccessToken } from "@/lib/server/auth";
 import { HTTPError } from "ky";
+import ChangeRole from "./_organisms/ChangeRole";
+import ManageAccount from "./_organisms/ManageAccount";
 
 export default async function UserDetailPage(props: PageProps<"/users/[id]">) {
   const { id } = await props.params;
@@ -107,38 +109,8 @@ export default async function UserDetailPage(props: PageProps<"/users/[id]">) {
         </div>
 
         <div className="space-y-4">
-          <div className="rounded-2xl border border-border bg-surface p-5">
-            <h2 className="mb-4 text-sm font-semibold text-foreground">역할 변경</h2>
-            <p className="mb-3 text-xs text-muted-foreground">
-              SUPER_ADMIN 계정만 역할을 변경할 수 있습니다.
-            </p>
-            <Field>
-              <Label htmlFor="role">역할</Label>
-              <select id="role" name="role" defaultValue={user.role}>
-                <option value="USER">일반회원</option>
-                <option value="ADMIN">관리자</option>
-                <option value="SUPER_ADMIN">슈퍼 관리자</option>
-              </select>
-            </Field>
-            <Button className="mt-3 w-full">
-              역할 저장
-            </Button>
-          </div>
-
-          <div className="rounded-2xl border border-rose-200 bg-surface p-5 dark:border-rose-500/20">
-            <h2 className="mb-1 text-sm font-semibold text-foreground">위험 구역</h2>
-            <p className="mb-4 text-xs text-muted-foreground">
-              계정 상태 변경 및 삭제는 신중하게 진행하세요.
-            </p>
-            <div className="flex flex-col gap-2">
-              <Button variant="secondary" className="w-full">
-                {user.isActive ? "계정 비활성화" : "계정 활성화"}
-              </Button>
-              <Button variant="destructive" className="w-full">
-                계정 삭제
-              </Button>
-            </div>
-          </div>
+          <ChangeRole user={user} />
+          <ManageAccount user={user} />
         </div>
       </div>
     </div>
